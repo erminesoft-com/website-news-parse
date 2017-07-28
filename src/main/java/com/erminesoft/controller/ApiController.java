@@ -29,12 +29,12 @@ public class ApiController {
     private FileService fileService;
 
     /**
-     * Get one bock feed news by site and strategy
+     * Get bock feed news by site and strategy
      *
      * @return map with string block html, and number news
      */
     @RequestMapping(value = "/feed", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getOneFeedBlock(
+    public Map<String, Object> getFeedBlock(
             @RequestBody OneBlock oneBlock ) {
         logger.info("getOneFeedBlock with site = {}, strategy = {}", oneBlock.getSite(), oneBlock.getStrategy());
         Map<String, Object> oneFeed = parserService.getFeed(oneBlock);
@@ -43,12 +43,12 @@ public class ApiController {
     }
 
     /**
-     * Get one title by default or strategy and key
+     * Get title by default or strategy and key
      *
      * @return map
      */
     @RequestMapping(value = "/title", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getOneTitle(
+    public Map<String, Object> getTitle(
             @RequestBody IncomeListModelParser incomeModelParce) {
 
         if (StringUtils.isEmpty(incomeModelParce)) return null;
@@ -62,12 +62,12 @@ public class ApiController {
     }
 
     /**
-     * Get one Link by default or strategy and key
+     * Get Link by default or strategy and key
      *
      * @return map
      */
     @RequestMapping(value = "/link", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getOneLink(
+    public Map<String, Object> getLink(
             @RequestBody IncomeListModelParser incomeModelParce) {
 
         if (StringUtils.isEmpty(incomeModelParce)) return null;
@@ -81,12 +81,12 @@ public class ApiController {
     }
 
     /**
-     * Get one Image Link by default or strategy and key
+     * Get Image Link by default or strategy and key
      *
      * @return map
      */
     @RequestMapping(value = "/image", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getOneImage(
+    public Map<String, Object> getImage(
             @RequestBody IncomeListModelParser incomeModelParce) {
 
         if (StringUtils.isEmpty(incomeModelParce)) return null;
@@ -100,12 +100,12 @@ public class ApiController {
     }
 
     /**
-     * Get one Description text by default or strategy and key
+     * Get Description text by default or strategy and key
      *
      * @return map
      */
     @RequestMapping(value = "/desc", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getOneDescription(
+    public Map<String, Object> getDescription(
             @RequestBody IncomeListModelParser incomeModelParce) {
 
         if (StringUtils.isEmpty(incomeModelParce)) return null;
@@ -119,12 +119,12 @@ public class ApiController {
     }
 
     /**
-     * Get one Time text by default or strategy and key
+     * Get Time text by default or strategy and key
      *
      * @return map
      */
     @RequestMapping(value = "/time", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getOneTime(
+    public Map<String, Object> getTime(
             @RequestBody IncomeListModelParser incomeModelParce) {
 
         if (StringUtils.isEmpty(incomeModelParce)) return null;
@@ -157,7 +157,7 @@ public class ApiController {
     /**
      * Save configuration for parse site
      *
-     * @return map<ArticleDto>
+     * @return IncomeListModelParser
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public IncomeListModelParser save(@RequestBody IncomeListModelParser incomeListModelParse) {
@@ -174,7 +174,7 @@ public class ApiController {
     /**
      * Save configuration for parse site
      *
-     * @return map<ArticleDto>
+     * @return map
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> update(@RequestBody IncomeListModelParser incomeListModelParse) {

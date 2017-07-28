@@ -1,6 +1,5 @@
 gogoApp.constant('config', {
     url_basic: 'http://localhost:8080/api/v1/',
-    // url_basic: 'http://192.168.1.40:9099/admin/mmj/',
     url_site: 'site',
     info_anchor: '#/info',
     one_block_feed: 'feed',
