@@ -1,0 +1,457 @@
+<div class="card-text">
+    <div notifybar style="position:absolute;top0;right:0"></div>
+    <table class="table-bordered table-hover table-sm col col-12 table-fixed">
+        <thead class="thead-default">
+        <tr>
+            <th class="col-md-1">ID</th>
+            <th class="col-md-5">Name</th>
+            <th class="col-md-3">Parse</th>
+            <th class="col-md-3">Operation</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="current in websiteList">
+            <td class="col-md-1">{{current.id}}</td>
+            <td class="col-md-5"><span title={{current.site}}>{{current.name}}</span></td>
+            <td class="col-md-3">
+                <button class="btn btn-sm btn-block btn-outline-warning" ng-click="getListArticleById(current.id)">
+                    News
+                </button>
+                <button class="btn btn-sm btn-block btn-outline-success" ng-click="getFile(current.id)">
+                    Download excel file
+                </button>
+            </td>
+            <td class="col-md-3">
+                <button class="btn btn-sm btn-block btn-outline-primary" ng-click="loadConfig(current.id)">
+                    Update
+                </button>
+                <button class="btn btn-sm btn-block btn-outline-danger"
+                        ng-click="deleteSite($index, current.id)">
+                    Delete
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="row card-block">
+    <div class="col col-12">
+        <div class="card-header h6"><b>Try get one block html news:</b></div>
+        <div class="card-block">
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Name:</label>
+                <input class="col-9 form-control" ng-model="blockFeed.name" type="text" placeholder="title site"
+                       required ng-disabled="blockFeed.id != null">
+            </div>
+
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Web-site:</label>
+                <input class="col-9 form-control" ng-model="blockFeed.site" type="text" placeholder="http link"
+                       required>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Strategy:</label>
+                <div class="col-xs-8">
+                    <select class="form-control" ng-model="blockFeed.strategy" title="Select strategy"
+                            convert-to-number>
+                        <option value="" disabled>Select strategy</option>
+                        <option value="1" ng-selected="blockFeed.strategy == 1">RRS Feeds</option>
+                        <option value="2" ng-selected="blockFeed.strategy == 2">Select by tag (Example:&lt;item&gt;&lt;/item&gt;)
+                        </option>
+                        <option value="3" ng-selected="blockFeed.strategy == 3">Select by attribute (Example:&lt;item
+                            attribute="..."&gt;&lt;/item&gt;)
+                        </option>
+                        <option value="4" ng-selected="blockFeed.strategy == 4">Select by attribute and value(Example:&lt;item
+                            attribute="value"&gt;&lt;/item&gt;)
+                        </option>
+                        <option value="5" ng-selected="blockFeed.strategy == 5">Select by attribute and value starting (&lt;item
+                            attribute="value starting"&gt;&lt;/item&gt;)
+                        </option>
+                        <option value="6" ng-selected="blockFeed.strategy == 6">Select by attribute and value containing
+                            (&lt;item attribute="value
+                            containing"&gt;&lt;/item&gt;)
+                        </option>
+                        <option value="7" ng-selected="blockFeed.strategy == 7">Select by double select(First -
+                            attribute = class value=key1, Second - attribute = class value=key2)
+                        </option>
+                        <option value="8" ng-selected="blockFeed.strategy == 8">Select by double select (First -
+                            attribute = class, value=key, Second attribute and value starting)
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row"
+                 ng-hide="blockFeed.strategy != 2 && blockFeed.strategy != 3 && blockFeed.strategy != 4 && blockFeed.strategy != 5
+                 && blockFeed.strategy != 6 && blockFeed.strategy != 7 && blockFeed.strategy != 8">
+                <label class="col-3 col-form-label">Key:</label>
+                <div class="col-xs-4">
+                    <input class="col-9 form-control" ng-model="blockFeed.key" placeholder="key" type="text" required>
+                </div>
+                <div ng-hide="blockFeed.strategy != 4 && blockFeed.strategy != 5 && blockFeed.strategy != 6
+                && blockFeed.strategy != 7 && blockFeed.strategy != 8">
+                    <div class="col-xs-4">
+                        <input class="col-9 form-control" ng-model="blockFeed.second" placeholder="key second"
+                               type="text" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        &nbsp;
+        <button class="btn btn-outline-primary col-12"
+                ng-click="getFeedBlock(blockFeed)"
+                ng-disabled="blockFeed.strategy == undefined || blockFeed.site == undefined">
+            Check it!
+        </button>
+        &nbsp;
+        <div ng-hide="oneFeed == null">
+            <div class="container">
+                <code>{{oneFeed}}</code>
+            </div>
+            &nbsp;
+            <div class="container">
+                <p class="text-success">Count news: {{sizeFeeds}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col col-12">
+
+    <label class="checkbox-inline"><input type="checkbox" ng-init="title.rule.enable = false"
+                                          ng-model="title.rule.enable"><b>Title</b> </label>
+    <label class="checkbox-inline"><input type="checkbox" ng-init="link.rule.enable = false"
+                                          ng-model="link.rule.enable"><b>Link</b> </label>
+    <label class="checkbox-inline"><input type="checkbox" ng-init="image.rule.enable = false"
+                                          ng-model="image.rule.enable"><b>Image</b> </label>
+    <label class="checkbox-inline"><input type="checkbox" ng-init="desc.rule.enable = false"
+                                          ng-model="desc.rule.enable"><b>Description</b> </label>
+    <label class="checkbox-inline"><input type="checkbox" ng-init="time.rule.enable = false"
+                                          ng-model="time.rule.enable"><b>Time</b> </label>
+
+
+    <div ng-hide="!title.rule.enable">
+        <div class="card-header h6"><b>Try get title from this block:</b></div>
+        &nbsp;&nbsp;
+        <div class="row">
+            <div class="checkbox">
+                <label>Use default settings <input type="checkbox" ng-init="title.rule.default = false"
+                                                   ng-model="title.rule.default"></label>
+            </div> &nbsp;&nbsp;
+
+            <button class="btn btn-info"
+                    ng-click="getTitle(blockFeed, title.rule)"
+                    ng-disabled="!title.rule.default && (title.rule.strategy == undefined
+             || title.rule.key.one == undefined)">
+                Get title
+            </button>
+        </div>
+    </div>
+    &nbsp;&nbsp;
+
+    <div ng-show="!title.rule.default && title.rule.enable" class="row">
+        <div class="col-xs-4">
+            <select class="form-control" ng-model="title.rule.strategy" convert-to-number>
+                <option value="" disabled>Select strategy</option>
+                <option value="1" ng-selected="title.rule.strategy == 1">From first key to second</option>
+                <option value="2" ng-selected="title.rule.strategy == 2">By tag</option>
+                <option value="3" ng-selected="title.rule.strategy == 3">Attr val by tag(1) and attr(2)</option>
+            </select>
+        </div>
+        &nbsp;&nbsp;
+        <div class="col-xs-4">
+            <input class="form-control " placeholder="title key 1" ng-model="title.rule.key.one" type="text"/>
+        </div>
+        &nbsp;&nbsp;
+        <div class="col-xs-4">
+            <input class="form-control " placeholder="title key 2 " ng-model="title.rule.key.two" type="text"/>
+        </div>
+        &nbsp;&nbsp;
+    </div>
+    &nbsp;&nbsp;
+
+    <div ng-hide="testTitle == null">
+        <div class="col-xs-4">
+            <p class="bg-success">{{testTitle}}</p>
+        </div>
+    </div>
+
+    <div ng-hide="!link.rule.enable">
+
+        <div class="card-header h6"><b>Try get link from this block:</b></div>
+        &nbsp;&nbsp;
+        <div class="row">
+            <div class="checkbox">
+                <label>Use default settings <input type="checkbox" ng-init="link.rule.default = false"
+                                                   ng-model="link.rule.default"></label>
+            </div> &nbsp;&nbsp;
+
+            <button class="btn btn-info"
+                    ng-click="getLink(blockFeed, link.rule)"
+                    ng-disabled="!link.rule.default && (link.rule.strategy == undefined
+             || link.rule.key.one == undefined)">
+                Get link
+            </button>
+        </div>
+    </div>
+    &nbsp;&nbsp;
+
+    <div ng-show="!link.rule.default && link.rule.enable" class="row">
+        <div class="col-xs-4">
+            <select class="form-control" ng-model="link.rule.strategy" convert-to-number>
+                <option value="" disabled>Select strategy</option>
+                <option value="1" ng-selected="link.rule.strategy == 1">From first key to second</option>
+                <option value="2" ng-selected="link.rule.strategy == 2">By tag</option>
+                <option value="3" ng-selected="link.rule.strategy == 3">Attr val by tag(1) and attr(2)</option>
+            </select>
+        </div>
+        &nbsp;&nbsp;
+        <div class="col-xs-4">
+            <input class="form-control " placeholder="link key 1" ng-model="link.rule.key.one" type="text"/>
+        </div>
+        &nbsp;&nbsp;
+        <div class="col-xs-4">
+            <input class="form-control " placeholder="link key 2" ng-model="link.rule.key.two" type="text"/>
+        </div>
+        &nbsp;&nbsp;
+        <div class="checkbox col-xs-4">
+            <label>Enable prefix <input type="checkbox" ng-model="link.rule.prefix"></label>
+        </div>
+        &nbsp;&nbsp;
+
+        <div class="col-xs-4" ng-show="link.rule.prefix == true">
+            <input class="form-control " placeholder="prefix" ng-model="link.rule.key.prefix" type="text"/>
+        </div>
+
+    </div>
+    &nbsp;&nbsp;
+
+    <div ng-hide="testLink == null">
+        <div class="col-xs-4">
+            <a href="{{testLink}}" target="_blank">{{testLink}}</a>
+        </div>
+    </div>
+    <!--</div>-->
+
+
+    <div ng-hide="!image.rule.enable">
+        <div class="card-header h6"><b>Try get image link from this block:</b>></div>
+        &nbsp;&nbsp;
+        <div class="row">
+            <div class="checkbox">
+                <label>Use default settings <input type="checkbox" ng-init="image.rule.default = false"
+                                                   ng-model="image.rule.default"></label>
+            </div> &nbsp;&nbsp;
+
+            <button class="btn btn-info" ng-click="getImage(blockFeed, image.rule)"
+                    ng-disabled="!image.rule.default
+            && (image.rule.strategy == undefined || image.rule.key.one == undefined)
+            && (!image.rule.key.linkEnable || image.rule.key.link_default == undefined)
+            ">
+                Get image
+            </button>
+            &nbsp;&nbsp;
+            <div class="checkbox">
+                <label>Set default image link <input type="checkbox" ng-init="image.rule.key.linkEnable = false"
+                                                     ng-model="image.rule.key.linkEnable"></label>
+            </div>
+            &nbsp;&nbsp;
+            <div ng-show="image.rule.key.linkEnable == true">
+                <input class="form-control " placeholder="default image link" ng-model="image.rule.key.link_default"
+                       type="text"/>
+            </div>
+        </div>
+
+        &nbsp;&nbsp;
+
+        <div ng-show="!image.rule.default && image.rule.enable && !image.rule.key.linkEnable" class="row">
+            <div class="col-xs-3">
+                <select class="form-control" ng-model="image.rule.strategy" convert-to-number>
+                    <option value="" disabled>Select strategy</option>
+                    <option value="1" ng-selected="image.rule.strategy == 1">From first key to second</option>
+                    <option value="2" ng-selected="image.rule.strategy == 2">By tag</option>
+                    <option value="3" ng-selected="image.rule.strategy == 3">Attr value by tag(1) and attr(2)</option>
+                </select>
+            </div>
+            &nbsp;&nbsp;
+            <div class="col-xs-3">
+                <input class="form-control " placeholder="image key 1" ng-model="image.rule.key.one" type="text"/>
+            </div>
+            &nbsp;&nbsp;
+            <div class="col-xs-3">
+                <input class="form-control " placeholder="image key 2" ng-model="image.rule.key.two" type="text"/>
+            </div>
+            &nbsp;&nbsp;
+            <div class="checkbox col-xs-3">
+                <label>Enable prefix <input type="checkbox" ng-model="image.rule.prefix"></label>
+            </div>
+            &nbsp;&nbsp;
+
+            <div class="col-xs-3" ng-show="image.rule.prefix == true">
+                <input class="form-control " placeholder="prefix" ng-model="image.rule.key.prefix" type="text"/>
+            </div>
+
+        </div>
+        &nbsp;&nbsp;
+
+        <div ng-hide="testImage == null">
+            <div class="col-xs-4">
+                <img src={{testImage}} height="200" width="300"></img>
+            </div>
+        </div>
+    </div>
+
+    <!--<div ng-hide="oneFeed == null">-->
+    <div ng-init="desc.rule.enable = false" ng-hide="!desc.rule.enable">
+        <div class="card-header h6"><b>Try get description from this block:</b></div>
+        &nbsp;&nbsp;
+        <div class="row">
+            <div class="checkbox">
+                <label>Use default settings <input type="checkbox" ng-init="desc.rule.default = false"
+                                                   ng-model="desc.rule.default"></label>
+            </div> &nbsp;&nbsp;
+
+            <button class="btn btn-info"
+                    ng-click="getDesc(blockFeed, desc.rule)"
+                    ng-disabled="!desc.rule.default && (desc.rule.strategy == undefined
+             || desc.rule.key.one == undefined)">
+                Get description
+            </button>
+        </div>
+    </div>
+    &nbsp;&nbsp;
+
+    <div ng-show="!desc.rule.default && desc.rule.enable" class="row">
+        <div class="col-xs-4">
+            <select class="form-control" ng-model="desc.rule.strategy" convert-to-number>
+                <option value="" disabled>Select strategy</option>
+                <option value="1" ng-selected="desc.rule.strategy == 1">From first key to second</option>
+                <option value="2" ng-selected="desc.rule.strategy == 2">By tag</option>
+                <option value="3" ng-selected="desc.rule.strategy == 3">Attr value by tag(1) and attr(2)</option>
+            </select>
+        </div>
+        &nbsp;&nbsp;
+        <div class="col-xs-4">
+            <input class="form-control " placeholder="description key 1" ng-model="desc.rule.key.one" type="text"/>
+        </div>
+        &nbsp;&nbsp;
+        <div class="col-xs-4">
+            <input class="form-control " placeholder="description key 2" ng-model="desc.rule.key.two" type="text"/>
+        </div>
+        &nbsp;&nbsp;
+    </div>
+    &nbsp;&nbsp;
+
+    <div ng-hide="testDesc == null">
+        <div class="col-xs-4">
+            <p class="bg-success">{{testDesc}}</p>
+        </div>
+    </div>
+    <!--</div>-->
+
+    <!--<div ng-hide="oneFeed == null">-->
+    <div ng-hide="!time.rule.enable">
+        <div class="card-header h6"><b>Try get time from this block:</b></div>
+        &nbsp;&nbsp;
+        <div class="row">
+            <div class="checkbox">
+                <label>Use default settings <input type="checkbox" ng-init="time.rule.default = false"
+                                                   ng-model="time.rule.default"></label>
+            </div> &nbsp;&nbsp;
+
+            <button class="btn btn-info"
+                    ng-click="getTime(blockFeed, time.rule)"
+                    ng-disabled="!time.rule.default && (time.rule.strategy == undefined
+             || time.rule.key.one == undefined)">
+                Get time
+            </button>
+        </div>
+    </div>
+    &nbsp;&nbsp;
+    <div class="row" ng-show="!time.rule.default && time.rule.enable">
+        <div class="col-xs-3">
+            <select class="form-control" ng-model="time.rule.strategy" convert-to-number>
+                <option value="" disabled>Select strategy</option>
+                <option value="1" ng-selected="time.rule.strategy == 1">From first key to second</option>
+                <option value="2" ng-selected="time.rule.strategy == 2">By tag</option>
+                <option value="3" ng-selected="time.rule.strategy == 3">Attr val by tag(1) and attr(2)</option>
+            </select>
+        </div>
+        &nbsp;&nbsp;
+        <div class="col-xs-3">
+            <input class="form-control " placeholder="time key 1" ng-model="time.rule.key.one" type="text"/>
+        </div>
+        &nbsp;&nbsp;
+        <div class="col-xs-3">
+            <input class="form-control " placeholder="time key 2" ng-model="time.rule.key.two" type="text"/>
+        </div>
+        &nbsp;&nbsp;
+    </div>
+    &nbsp;&nbsp;
+    <div ng-hide="testTime == null">
+        <div class="col-xs-4">
+            <p class="bg-success">{{testTime}}</p>
+        </div>
+    </div>
+    <!--</div>-->
+</div>
+<div class="col col-12" ng-show="blockFeed.strategy == 1 || oneFeed != null">
+    <button class="btn btn-info col-12"
+            ng-click="getListArticle(blockFeed, title.rule, link.rule, image.rule, desc.rule, time.rule)">
+        Get list news
+    </button>
+</div>
+&nbsp;&nbsp;
+<div class="col col-12"
+     ng-show="(blockFeed.strategy == 1 || oneFeed != null) && resultArticleList != null && blockFeed.id == null">
+    <button class="btn btn-default col-12"
+            ng-click="saveConfig(blockFeed, title.rule, link.rule, image.rule, desc.rule, time.rule)">
+        Save config
+    </button>
+</div>
+
+<div class="col col-12" ng-show="blockFeed.id != null">
+    <button class="btn btn-default col-12"
+            ng-click="updateConfig(blockFeed, title.rule, link.rule, image.rule, desc.rule, time.rule)">
+        Update config
+    </button>
+</div>
+
+&nbsp;&nbsp;
+&nbsp;&nbsp;
+&nbsp;&nbsp;
+<div ng-hide="resultArticleList == null">
+    <div class="row card-block">
+        <div class="col col-12">
+            <div class="card-header h6">Result List</div>
+            <div class="card-text">
+                <table class="table-bordered table-hover table-sm col col-12">
+                    <thead class="thead-default">
+                    <tr>
+                        <th>id</th>
+                        <th>title</th>
+                        <th>link</th>
+                        <th>description</th>
+                        <th>image_url</th>
+                        <th>date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="current in resultArticleList">
+                        <td>{{current.id}}</td>
+                        <td>{{current.title}}</td>
+                        <td><a href="{{current.link}}" target="_blank">{{current.link}}</a></td>
+                        <td>{{current.description}}</td>
+                        <td><img src="{{current.image}}" height="70" width="200"/></td>
+                        <td>{{current.date}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

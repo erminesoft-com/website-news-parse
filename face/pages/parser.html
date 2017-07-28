@@ -1,0 +1,232 @@
+<div class="row card-block">
+    <div class="col col-4">
+        <div class="card-header h6">Fill parameters for new site here</div>
+        <div class="card-block">
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Title:</label>
+                <input class="col-9 form-control" ng-model="site.title" type="text" required>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label">URL:</label>
+                <input class="col-9 form-control" ng-model="site.url" type="text" required>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Image:</label>
+                <input class="col-9 form-control" ng-model="site.default_image_url" type="text" required>
+            </div>
+        </div>
+        <button class="btn btn-outline-primary col-12"
+                ng-click="addNewSite(site)"
+                ng-disabled="site.url == undefined
+             || site.title == undefined || site.default_image_url == null">
+            Add new site
+        </button>
+    </div>
+    <div class="col col-8">
+        <div class="card-header h6">Existing prepared sites</div>
+        <form class="card-block">
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                <input type="text" class="form-control" placeholder="Search site" ng-model="searchSite">
+            </div>
+        </form>
+        <div class="card-text">
+            <table class="table-bordered table-hover table-sm col col-12">
+                <thead class="thead-default">
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>URL</th>
+                    <th>Image</th>
+                    <th>Parse</th>
+                    <th>Operate</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="current in siteList | filter:searchSite track by $index">
+                    <th>{{current.id}}</th>
+                    <td>{{current.title | limitTo: 20}}</td>
+                    <td>{{current.url | limitTo: 40}}</td>
+                    <td><img class="img-thumbnail" width="100" src={{current.default_image_url}}/></td>
+                    <td>
+                        <button class="btn btn-sm btn-block btn-outline-warning" ng-click="listParameters(current)">
+                            Regexp
+                        </button>
+                        <button class="btn btn-sm btn-block btn-outline-success" ng-click="parseSite(current.id)">
+                            TRY!
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-block btn-outline-primary" ng-click="getAllArticles(current.id)">
+                            News
+                        </button>
+                        <button class="btn btn-sm btn-block btn-outline-danger"
+                                ng-click="deleteSite(index, current.id)">
+                            Delete
+                        </button>
+                    </td>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="row card-block">
+    <div class="col col-12">
+        <div class="card-header h6">Possible result of parsing (press TRY in site list!)</div>
+        <form class="card-block">
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                <input type="text" class="form-control" placeholder="Search article" ng-model="searchArticle">
+            </div>
+        </form>
+        <div class="card-text">
+            <table class="table-bordered table-hover table-sm col col-12">
+                <thead class="thead-default">
+                <tr>
+                    <th>id</th>
+                    <th>title</th>
+                    <th>description</th>
+                    <th>image_url</th>
+                    <th>date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="current in articleList | filter:searchArticle track by $index">
+                    <td>{{current.id}}</td>
+                    <td>{{current.title}}</td>
+                    <td>{{current.description}}</td>
+                    <td>{{current.image_url}}</td>
+                    <td>{{current.date}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal siteDetailsModal -->
+<div class="modal fade" id="siteDetailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Update/setup regexp parameters for current site</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form">
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Site ID:</label>
+                        <div class="col-3 input-group">
+                            <input class="form-control" type="text" ng-model="siteToShow.id"
+                                   disabled/>
+                        </div>
+                        <label class="col-2 col-form-label text text-right">Site title:</label>
+                        <div class="col-4 input-group">
+                            <input class="form-control" type="text" ng-model="siteToShow.title"
+                                   disabled/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label"><b>Article start:</b></label>
+                        <div class="col-9 input-group">
+                            <input class="form-control" type="text"
+                                   ng-model="nativeRegexpDto.global_start"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label"><b>Article end:</b></label>
+                        <div class="col-9 input-group">
+                            <input class="form-control" type="text" ng-model="nativeRegexpDto.global_end"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Title start:</label>
+                        <div class="col-9 input-group">
+                            <input class="form-control" type="text"
+                                   ng-model="nativeRegexpDto.title_start"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Title end:</label>
+                        <div class="col-9 input-group">
+                            <input class="form-control" type="text" ng-model="nativeRegexpDto.title_end"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Description start:</label>
+                        <div class="col-9 input-group">
+                            <input class="form-control" type="text"
+                                   ng-model="nativeRegexpDto.description_start"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Description end:</label>
+                        <div class="col-9 input-group">
+                            <input class="form-control" type="text"
+                                   ng-model="nativeRegexpDto.description_end"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Image start:</label>
+                        <div class="col-9 input-group">
+                            <input class="form-control" type="text"
+                                   ng-model="nativeRegexpDto.image_url_start"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Image end:</label>
+                        <div class="col-9 input-group">
+                            <input class="form-control" type="text"
+                                   ng-model="nativeRegexpDto.image_url_end"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Date start:</label>
+                        <div class="col-9 input-group">
+                            <input class="form-control" type="text" ng-model="nativeRegexpDto.date_start"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Date end:</label>
+                        <div class="col-9 input-group">
+                            <input class="form-control" type="text" ng-model="nativeRegexpDto.date_end"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-primary {{nativeRegexpDto &&
+            nativeRegexpDto.global_start &&
+            nativeRegexpDto.global_end &&
+            nativeRegexpDto.title_start  &&
+            nativeRegexpDto.title_end &&
+            nativeRegexpDto.description_start &&
+            nativeRegexpDto.description_end  &&
+            nativeRegexpDto.image_url_start &&
+            nativeRegexpDto.image_url_end &&
+            nativeRegexpDto.date_start &&
+            nativeRegexpDto.date_end? null : 'disabled'}}"
+                        ng-click="nativeRegexpDto &&
+            nativeRegexpDto.global_start &&
+            nativeRegexpDto.global_end &&
+            nativeRegexpDto.title_start  &&
+            nativeRegexpDto.title_end &&
+            nativeRegexpDto.description_start &&
+            nativeRegexpDto.description_end  &&
+            nativeRegexpDto.image_url_start &&
+            nativeRegexpDto.image_url_end &&
+            nativeRegexpDto.date_start &&
+            nativeRegexpDto.date_end? updateRules(siteToShow.id, nativeRegexpDto) : null"
+                        data-dismiss="modal">
+                    Update regexp
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
