@@ -7,20 +7,20 @@
         </encoder>
     </appender>
 
-    <!--<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
-        <!--<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
-                <!--<fileNamePattern>/gogo_parser/logs/%d{yyyy-MM-dd}.%i.txt</fileNamePattern>-->
-            <!--<maxFileSize>20MB</maxFileSize>-->
-            <!--<maxHistory>20</maxHistory>-->
-            <!--<totalSizeCap>200MB</totalSizeCap>-->
-        <!--</rollingPolicy>-->
-        <!--<encoder>-->
-            <!--<pattern>%d{HH:mm:ss.SSS} %level [%file:%line] %msg%n</pattern>-->
-        <!--</encoder>-->
-    <!--</appender>-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>/parser/logs/%d{yyyy-MM-dd}.%i.txt</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>20</maxHistory>
+            <totalSizeCap>200MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %level [%file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
 
-    <root level="info">
-        <!--<appender-ref ref="FILE"/>-->
-        <appender-ref ref="STDOUT"/>
+    <root level="warn">
+        <appender-ref ref="FILE"/>
     </root>
+
 </configuration>
