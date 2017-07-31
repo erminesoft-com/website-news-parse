@@ -11,15 +11,15 @@ public interface ParserService {
 
     Map<String, Object> getFeed(OneBlock oneBlock);
 
-    String getTitle(IncomeListModelParser incomeModelParce);
+    String getTitle(IncomeListModelParser incomeModelParse);
 
-    String getLink(IncomeListModelParser incomeModelParce);
+    String getLink(IncomeListModelParser incomeModelParse);
 
-    String getImage(IncomeListModelParser incomeModelParce);
+    String getImage(IncomeListModelParser incomeModelParse);
 
-    String getDesc(IncomeListModelParser incomeModelParce);
+    String getDesc(IncomeListModelParser incomeModelParse);
 
-    String getTime(IncomeListModelParser incomeModelParce);
+    String getTime(IncomeListModelParser incomeModelParse);
 
     List<ArticleDto> getListArticles(IncomeListModelParser incomeListModelParse);
 

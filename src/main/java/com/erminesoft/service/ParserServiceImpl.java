@@ -1,9 +1,5 @@
 package com.erminesoft.service;
 
-import com.rometools.rome.feed.synd.SyndEntry;
-import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.io.SyndFeedInput;
-import com.rometools.rome.io.XmlReader;
 import com.erminesoft.dto.*;
 import com.erminesoft.model.Key;
 import com.erminesoft.model.Rule;
@@ -12,6 +8,9 @@ import com.erminesoft.repository.KeyRepository;
 import com.erminesoft.repository.RuleRepository;
 import com.erminesoft.repository.WebsiteRepository;
 import com.erminesoft.worker.Worker;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
@@ -22,6 +21,7 @@ import org.springframework.util.StringUtils;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ParserServiceImpl implements ParserService {
@@ -56,43 +56,43 @@ public class ParserServiceImpl implements ParserService {
     }
 
     @Override
-    public String getTitle(IncomeListModelParser incomeModelParce) {
-        String block = getMainBlock(incomeModelParce);
+    public String getTitle(IncomeListModelParser incomeModelParse) {
+        String block = getMainBlock(incomeModelParse);
         logger.info("getTitle() block = {}", block);
-        String result = parser.getOneTitleFromBlockHtml(incomeModelParce.getTitle(), block);
+        String result = parser.getOneTitleFromBlockHtml(incomeModelParse.getTitle(), block);
         logger.info("getTitle() result = {}", result);
         return result;
     }
 
     @Override
-    public String getLink(IncomeListModelParser incomeModelParce) {
-        String block = getMainBlock(incomeModelParce);
+    public String getLink(IncomeListModelParser incomeModelParse) {
+        String block = getMainBlock(incomeModelParse);
         logger.info("getLink() block = {}", !StringUtils.isEmpty(block));
-        return parser.getOneLinkFromBlockHtml(incomeModelParce.getLink(), block);
+        return parser.getOneLinkFromBlockHtml(incomeModelParse.getLink(), block);
     }
 
     @Override
-    public String getImage(IncomeListModelParser incomeModelParce) {
-        String block = getMainBlock(incomeModelParce);
+    public String getImage(IncomeListModelParser incomeModelParse) {
+        String block = getMainBlock(incomeModelParse);
         logger.info("getImage() block = {}", !StringUtils.isEmpty(block));
-        return parser.getOneImageFromBlockHtml(incomeModelParce.getImage(), block);
+        return parser.getOneImageFromBlockHtml(incomeModelParse.getImage(), block);
     }
 
     @Override
-    public String getDesc(IncomeListModelParser incomeModelParce) {
-        String block = getMainBlock(incomeModelParce);
+    public String getDesc(IncomeListModelParser incomeModelParse) {
+        String block = getMainBlock(incomeModelParse);
         logger.info("getDesc() block = {}", !StringUtils.isEmpty(block));
-        return parser.getOneDescriptionFromBlockHtml(incomeModelParce.getDesc(), block);
+        return parser.getOneDescriptionFromBlockHtml(incomeModelParse.getDesc(), block);
     }
 
     @Override
-    public String getTime(IncomeListModelParser incomeModelParce) {
-        String block = getMainBlock(incomeModelParce);
+    public String getTime(IncomeListModelParser incomeModelParse) {
+        String block = getMainBlock(incomeModelParse);
         logger.info("getTime() block exist = {}, length= {}", !StringUtils.isEmpty(block), block.length());
-        String result = parser.getOneTimeFromBlockHtml(incomeModelParce.getTime(), block);
+        String result = parser.getOneTimeFromBlockHtml(incomeModelParse.getTime(), block);
         logger.info("getTime() string after parse = {}", result);
 
-        String finishTimeString = timeService.getFinishTime(result, incomeModelParce.getBlock().getSite());
+        String finishTimeString = timeService.getFinishTime(result, incomeModelParse.getBlock().getSite());
         logger.info("Leaving getTime() - {}", finishTimeString);
         return finishTimeString;
     }
@@ -102,13 +102,13 @@ public class ParserServiceImpl implements ParserService {
 
         if (incomeListModelParse.getBlock().getStrategy() == 1) {
             List<ArticleDto> result = getListByRrs(incomeListModelParse.getBlock().getSite());
-          try{
-            if (incomeListModelParse.getImage().getKey().getDefaultLink() != null){
-                result.forEach(x-> x.setImageUrl(incomeListModelParse.getImage().getKey().getDefaultLink()));
+            try {
+                if (incomeListModelParse.getImage().getKey().getDefaultLink() != null) {
+                    result.forEach(x -> x.setImageUrl(incomeListModelParse.getImage().getKey().getDefaultLink()));
+                }
+            } catch (NullPointerException e) {
+                logger.warn("Get new by rss without default image");
             }
-          } catch (NullPointerException e){
-              logger.warn("Get new by rss without default image");
-          }
             return result;
         }
 
@@ -215,11 +215,11 @@ public class ParserServiceImpl implements ParserService {
 
         if (webSite.getStrategy() == 1) {
             List<ArticleDto> result = getListByRrs(webSite.getSite());
-            try{
-                if (webSite.getImage().getKey().getDefaultLink() != null){
-                    result.forEach(x-> x.setImageUrl(webSite.getImage().getKey().getDefaultLink()));
+            try {
+                if (webSite.getImage().getKey().getDefaultLink() != null) {
+                    result.forEach(x -> x.setImageUrl(webSite.getImage().getKey().getDefaultLink()));
                 }
-            } catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 logger.warn("Get new by rss without default image");
             }
             return result;
@@ -312,7 +312,7 @@ public class ParserServiceImpl implements ParserService {
 
         if (oneBlock.getStrategy() == 1) {
             result.setBlock(oneBlock);
-            if (webSite.isImageEnable()){
+            if (webSite.isImageEnable()) {
                 RuleOneForBlock imageDeafult = new RuleOneForBlock();
                 imageDeafult.setEnable(true);
                 imageDeafult.setId(webSite.getImage().getId());
@@ -433,15 +433,13 @@ public class ParserServiceImpl implements ParserService {
     }
 
     private List<OneBlock> transformFromWebSitesList(List<WebSite> list) {
-        List<OneBlock> result = new ArrayList<>();
-        list.forEach(x -> {
+        return list.stream().map(x -> {
             OneBlock oneBlock = new OneBlock();
             oneBlock.setId(x.getId());
             oneBlock.setSite(x.getSite());
             oneBlock.setName(x.getName());
-            result.add(oneBlock);
-        });
-        return result;
+            return oneBlock;
+        }).collect(Collectors.toList());
     }
 
     private WebSite transformFromIncomeListModelParseToWebSite(IncomeListModelParser incomeListModelParse) {
@@ -455,7 +453,7 @@ public class ParserServiceImpl implements ParserService {
         webSite.setSite(block.getSite());
         webSite.setName(block.getName());
         webSite.setStrategy(block.getStrategy());
-        if (block.getKey() != null){
+        if (block.getKey() != null) {
             webSite.setKeyFirst(block.getKey());
         }
         if (block.getStrategy() > 3) {
@@ -613,8 +611,8 @@ public class ParserServiceImpl implements ParserService {
         return webSite;
     }
 
-    private String getMainBlock(IncomeListModelParser incomeModelParce) {
-        Map<String, Object> oneFeed = getFeed(incomeModelParce.getBlock());
+    private String getMainBlock(IncomeListModelParser incomeModelParse) {
+        Map<String, Object> oneFeed = getFeed(incomeModelParse.getBlock());
         return (String) oneFeed.get("feed");
     }
 
@@ -626,19 +624,19 @@ public class ParserServiceImpl implements ParserService {
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(new XmlReader(feedUrl));
             int id = 1;
-            for (SyndEntry syndEntry : feed.getEntries()) {
+            feed.getEntries().forEach(syndEntry -> {
                 ArticleDto articleDto = new ArticleDto();
-                articleDto.setId(id++);
+                articleDto.setId(id + 1);
                 articleDto.setTitle(syndEntry.getTitle());
                 articleDto.setLink(syndEntry.getLink());
                 articleDto.setDescription(syndEntry.getDescription().getValue());
                 articleDto.setDate(syndEntry.getPublishedDate().toString());
                 result.add(articleDto);
-            }
+            });
+
         } catch (Exception ex) {
             logger.warn("getListByRrs() error", ex.getLocalizedMessage());
         }
-
         logger.info("Leaving getListByRrs() size result - {}", result.size());
         return result;
     }

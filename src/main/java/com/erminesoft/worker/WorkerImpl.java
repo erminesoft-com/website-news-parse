@@ -101,11 +101,11 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public String getOneTitleFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String inComeText) {
+    public String getOneTitleFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText) {
 
         if (oneBlockNewsDto.isDefault()) {
             logger.info("Parse one title block by default");
-            Document doc = Jsoup.parse(inComeText);
+            Document doc = Jsoup.parse(incomingText);
             String title;
             try {
                 title = doc.select(TAG_A).first().attr(TAG_TITLE);
@@ -123,16 +123,16 @@ public class WorkerImpl implements Worker {
         switch (oneBlockNewsDto.getStrategy()) {
             case 1:
                 logger.info("Get title by strategy 1");
-                result = getTextFromHtml(inComeText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
+                result = getTextFromHtml(incomingText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
                 break;
             case 2:
                 logger.info("Get title by strategy 2");
-                Document doc = Jsoup.parse(inComeText);
+                Document doc = Jsoup.parse(incomingText);
                 result = doc.select(oneBlockNewsDto.getKey().getOne()).text();
                 break;
             case 3:
                 logger.info("Get title by strategy 3");
-                Document doc1 = Jsoup.parse(inComeText);
+                Document doc1 = Jsoup.parse(incomingText);
                 result = doc1.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
                 break;
         }
@@ -140,11 +140,11 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public String getOneLinkFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String inComeText) {
+    public String getOneLinkFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText) {
 
         if (oneBlockNewsDto.isDefault()) {
             logger.info("Parse one block for link by default");
-            Document doc = Jsoup.parse(inComeText);
+            Document doc = Jsoup.parse(incomingText);
             String link;
             try {
                 link = doc.select(TAG_A).attr(TAG_HREF);
@@ -160,14 +160,14 @@ public class WorkerImpl implements Worker {
         switch (oneBlockNewsDto.getStrategy()) {
             case 1:
                 logger.info("Get link by strategy 1");
-                result = getTextFromHtml(inComeText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
+                result = getTextFromHtml(incomingText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
                 if (oneBlockNewsDto.getKey().getLinkPrefix() != null) {
                     result = oneBlockNewsDto.getKey().getLinkPrefix() + result;
                     logger.info("getOneLinkFromBlockHtml() with prefix, link = {}", result);
                 }
                 break;
             case 2:
-                Document doc = Jsoup.parse(inComeText);
+                Document doc = Jsoup.parse(incomingText);
                 logger.info("Get link by strategy 2");
                 result = doc.select(oneBlockNewsDto.getKey().getOne()).text();
                 if (oneBlockNewsDto.getKey().getLinkPrefix() != null) {
@@ -176,7 +176,7 @@ public class WorkerImpl implements Worker {
                 break;
             case 3:
                 logger.info("Get link by strategy 3");
-                Document docCase3 = Jsoup.parse(inComeText);
+                Document docCase3 = Jsoup.parse(incomingText);
                 result = docCase3.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
                 if (oneBlockNewsDto.getKey().getLinkPrefix() != null) {
                     result = oneBlockNewsDto.getKey().getLinkPrefix() + result;
@@ -188,7 +188,7 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public String getOneImageFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String inComeText) {
+    public String getOneImageFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText) {
         logger.info("Entering getOneImageFromBlockHtml()");
         if (oneBlockNewsDto == null) return null;
 
@@ -201,7 +201,7 @@ public class WorkerImpl implements Worker {
 
         if (oneBlockNewsDto.isDefault()) {
             logger.info("Parse one block for image by default");
-            Document doc = Jsoup.parse(inComeText);
+            Document doc = Jsoup.parse(incomingText);
             String image;
             try {
                 image = doc.select(TAG_IMG).attr(TAG_ABS_SRC);
@@ -218,14 +218,14 @@ public class WorkerImpl implements Worker {
 
         switch (oneBlockNewsDto.getStrategy()) {
             case 1:
-                result = getTextFromHtml(inComeText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
+                result = getTextFromHtml(incomingText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
                 if (oneBlockNewsDto.getKey().getLinkPrefix() != null) {
                     result = oneBlockNewsDto.getKey().getLinkPrefix() + result;
                     logger.info("getOneImageFromBlockHtml() with prefix, link = {}", result);
                 }
                 break;
             case 2:
-                Document doc = Jsoup.parse(inComeText);
+                Document doc = Jsoup.parse(incomingText);
                 logger.info("Get image by strategy 2");
                 result = doc.select(oneBlockNewsDto.getKey().getOne()).text();
                 if (oneBlockNewsDto.getKey().getLinkPrefix() != null) {
@@ -235,7 +235,7 @@ public class WorkerImpl implements Worker {
                 break;
             case 3:
                 logger.info("Get image by strategy 3");
-                Document docCase3 = Jsoup.parse(inComeText);
+                Document docCase3 = Jsoup.parse(incomingText);
                 result = docCase3.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
                 if (oneBlockNewsDto.getKey().getLinkPrefix() != null) {
                     result = oneBlockNewsDto.getKey().getLinkPrefix() + result;
@@ -248,12 +248,12 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public String getOneDescriptionFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String inComeText) {
+    public String getOneDescriptionFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText) {
         if (oneBlockNewsDto == null) return null;
 
         if (oneBlockNewsDto.isDefault()) {
             logger.info("Parse one block for image by default");
-            Document doc = Jsoup.parse(inComeText);
+            Document doc = Jsoup.parse(incomingText);
             String desc;
             try {
                 desc = doc.select(TAG_P).text();
@@ -271,16 +271,16 @@ public class WorkerImpl implements Worker {
         switch (oneBlockNewsDto.getStrategy()) {
             case 1:
                 logger.info("Get desc by strategy 1");
-                result = getTextFromHtml(inComeText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
+                result = getTextFromHtml(incomingText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
                 break;
             case 2:
                 logger.info("Get desc by strategy 2");
-                Document document = Jsoup.parse(inComeText);
+                Document document = Jsoup.parse(incomingText);
                 result = document.select(oneBlockNewsDto.getKey().getOne()).text();
                 break;
             case 3:
                 logger.info("Get desc by strategy 2");
-                Document docCase3 = Jsoup.parse(inComeText);
+                Document docCase3 = Jsoup.parse(incomingText);
                 result = docCase3.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
                 break;
         }
@@ -288,13 +288,13 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public String getOneTimeFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String inComeText) {
+    public String getOneTimeFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText) {
         if (oneBlockNewsDto == null) return null;
         logger.info("Entering getOneTimeFromBlockHtml() with strategy = {}", oneBlockNewsDto.getStrategy());
 
         if (oneBlockNewsDto.isDefault()) {
             logger.info("Parse one block for time by default");
-            Document doc = Jsoup.parse(inComeText);
+            Document doc = Jsoup.parse(incomingText);
             String time;
             try {
                 time = doc.select(TAG_TIME).attr(TAG_DATETIME);
@@ -312,16 +312,16 @@ public class WorkerImpl implements Worker {
         switch (oneBlockNewsDto.getStrategy()) {
             case 1:
                 logger.info("Get time by strategy 1");
-                result = getTextFromHtml(inComeText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
+                result = getTextFromHtml(incomingText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
                 break;
             case 2:
                 logger.info("Get time by strategy 2");
-                Document doc1 = Jsoup.parse(inComeText);
+                Document doc1 = Jsoup.parse(incomingText);
                 result = doc1.select(oneBlockNewsDto.getKey().getOne()).text();
                 break;
             case 3:
                 logger.info("Get time by strategy 3");
-                Document doc = Jsoup.parse(inComeText);
+                Document doc = Jsoup.parse(incomingText);
                 result = doc.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
                 break;
         }
@@ -336,9 +336,8 @@ public class WorkerImpl implements Worker {
 
         String result = null;
         matcherDesc = patternTag_P.matcher(html);
-        while (matcherDesc.find()) {
+        if (matcherDesc.find()) {
             result = matcherDesc.group(1);
-            break;
         }
         return result;
     }

@@ -101,7 +101,7 @@ public class FileServiceImpl implements FileService {
             response.flushBuffer();
             inputStream.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.warn("Error download file - {}, error = {}", fileToDownload, e.getLocalizedMessage());
         }
         logger.info("Deleting file {}", fileToDownload);
         boolean result = false;
