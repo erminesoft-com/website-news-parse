@@ -13,7 +13,7 @@ public interface FileService {
 
     /**
      *@param fileName
-     * Download file with name and delete excel file from disk(in temp directory)
+     * Download file by name and delete excel file from disk(in temp directory)
      */
     void downloadFile(String fileName, HttpServletResponse response);
 }

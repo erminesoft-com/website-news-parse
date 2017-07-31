@@ -30,7 +30,7 @@ public class FileServiceImpl implements FileService {
     private static final String CONTENT_TYPE = "application/force-download";
     private static final String CONTENT_DISPOSITION = "Content-Disposition";
     private static final String ATTACHMENT = "attachment; filename=";
-    private static final String BASE_TEMP_PATH = System.getProperty("java.io.tmpdir");
+    private static final String BASE_TEMP_PATH = System.getProperty("java.io.tmpdir") + "/";
 
     @Autowired
     private WebsiteRepository websiteRepository;
@@ -76,7 +76,7 @@ public class FileServiceImpl implements FileService {
         String fileName = webSite.getName().concat("_").concat(String.valueOf(new Date().getTime())).concat(EXTENSION);
 
         try {
-            FileOutputStream outputStream = new FileOutputStream(BASE_TEMP_PATH +  "/" + fileName);
+            FileOutputStream outputStream = new FileOutputStream(BASE_TEMP_PATH + fileName);
             workbook.write(outputStream);
             outputStream.close();
         } catch (FileNotFoundException e) {
@@ -93,7 +93,7 @@ public class FileServiceImpl implements FileService {
         logger.info("Entering getFile() fileName = {}", fileName);
         File fileToDownload = null;
         try {
-            fileToDownload = new File(BASE_TEMP_PATH + "/" + fileName);
+            fileToDownload = new File(BASE_TEMP_PATH + fileName);
             InputStream inputStream = new FileInputStream(fileToDownload);
             response.setContentType(CONTENT_TYPE);
             response.setHeader(CONTENT_DISPOSITION, ATTACHMENT + fileName);
