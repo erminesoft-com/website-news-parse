@@ -1,5 +1,5 @@
-group 'test-project'
-version '1.0-SNAPSHOT'
+group 'parser'
+version '1.0'
 
 buildscript {
     repositories {
