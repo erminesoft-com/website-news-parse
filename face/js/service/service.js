@@ -6,10 +6,6 @@ gogoApp.service('service', function (config, $http) {
         console.log('get(' + targetUrl + ') works');
         $http({
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': token
-            },
             url: targetUrl
         })
             .then(function successCallback(response) {
@@ -28,14 +24,12 @@ gogoApp.service('service', function (config, $http) {
             url: targetUrl,
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': token
+                'Content-Type': 'application/json'
             },
             data: newEntity
         })
             .then(function successCallback(response) {
                 console.log(targetUrl + ' responded status ' + response);
-                // console.log('Result response: ' + response);
                 resp(response.data);
             }, function errorCallback(response) {
                 console.warn('Result error: ' + response.error);
@@ -47,8 +41,7 @@ gogoApp.service('service', function (config, $http) {
         $http({
             url: targetUrl,
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': token
+                'Content-Type': 'application/json'
             },
             method: 'DELETE'
         })
@@ -68,8 +61,7 @@ gogoApp.service('service', function (config, $http) {
             url: targetUrl,
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': token
+                'Content-Type': 'application/json'
             },
             data: entity
         })
