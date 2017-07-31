@@ -1,6 +1,6 @@
-gogoApp.service('entityService', function (config, $http, ngNotify) {
+gogoApp.service('service', function (config, $http) {
 
-    console.log('core entityService initialized');
+    console.log('core service initialized');
 
     this.get = function (targetUrl, resp) {
         console.log('get(' + targetUrl + ') works');

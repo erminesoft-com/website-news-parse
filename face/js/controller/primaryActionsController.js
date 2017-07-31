@@ -1,4 +1,4 @@
-gogoApp.controller('primaryActionsController', function (config, $scope, $window, entityService, ngNotify) {
+gogoApp.controller('primaryActionsController', function (config, $scope, $window, service, ngNotify) {
     console.log('core primaryActionsController initialized');
 
     var blockFeedUrl = config.url_basic + config.one_block_feed;
@@ -66,7 +66,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
     $scope.deleteSite = function (index, siteId) {
         console.log('delete site id - ' + siteId);
         console.log('delete site index - ' + index);
-        entityService.deleteSite(deleteSiteUrl + siteId, function (data) {
+        service.deleteSite(deleteSiteUrl + siteId, function (data) {
             console.log('delete site id - ' + siteId);
             $scope.websiteList.splice(index, 1);
             if (siteId === $scope.blockFeed.id) {
@@ -77,7 +77,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
 
     $scope.getFeedBlock = function (blockFeed) {
         console.log('get blockFeed');
-        entityService.post(blockFeedUrl, blockFeed, function (data) {
+        service.post(blockFeedUrl, blockFeed, function (data) {
             $scope.oneFeed = '';
             $scope.sizeFeeds = '';
             $scope.oneFeed = data.feed;
@@ -89,7 +89,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
         console.log('url - ' + titleUrl);
         $scope.requestData.block = blockFeed;
         $scope.requestData.title = title;
-        entityService.post(titleUrl, $scope.requestData, function (data) {
+        service.post(titleUrl, $scope.requestData, function (data) {
             console.log('get one title ' + data.data);
             $scope.testTitle = data.data;
         });
@@ -98,7 +98,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
     $scope.getLink = function (blockFeed, link) {
         $scope.requestData.block = blockFeed;
         $scope.requestData.link = link;
-        entityService.post(linkUrl, $scope.requestData, function (data) {
+        service.post(linkUrl, $scope.requestData, function (data) {
             console.log('Link path = ' + data.data);
             $scope.testLink = data.data;
         });
@@ -107,7 +107,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
     $scope.getImage = function (blockFeed, image) {
         $scope.requestData.block = blockFeed;
         $scope.requestData.image = image;
-        entityService.post(imageUrl, $scope.requestData, function (data) {
+        service.post(imageUrl, $scope.requestData, function (data) {
             console.log('Image path = ' + data.data);
             $scope.testImage = data.data;
         });
@@ -116,7 +116,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
     $scope.getDesc = function (blockFeed, desc) {
         $scope.requestData.block = blockFeed;
         $scope.requestData.desc = desc;
-        entityService.post(descUrl, $scope.requestData, function (data) {
+        service.post(descUrl, $scope.requestData, function (data) {
             $scope.testDesc = data.data;
         });
     };
@@ -124,7 +124,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
     $scope.getTime = function (blockFeed, time) {
         $scope.requestData.block = blockFeed;
         $scope.requestData.time = time;
-        entityService.post(timeUrl, $scope.requestData, function (data) {
+        service.post(timeUrl, $scope.requestData, function (data) {
             $scope.testTime = data.data;
         });
     };
@@ -137,7 +137,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
         $scope.requestData.desc = desc;
         $scope.requestData.time = time;
         console.log('url - ' + listUrl);
-        entityService.post(listUrl, $scope.requestData, function (data) {
+        service.post(listUrl, $scope.requestData, function (data) {
             $scope.resultArticleList = data;
         });
     };
@@ -159,7 +159,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
         $scope.requestData.desc = desc;
         $scope.requestData.time = time;
         console.log('url - ' + saveUrl);
-        entityService.post(saveUrl, $scope.requestData, function (data) {
+        service.post(saveUrl, $scope.requestData, function (data) {
             if (data.error != null) {
                 ngNotify.set('Error ' + data.error.message, {
                     type: "error",
@@ -192,7 +192,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
         $scope.requestData.desc = desc;
         $scope.requestData.time = time;
         console.log('url - ' + saveUrl);
-        entityService.post(updateUrl, $scope.requestData, function (data) {
+        service.post(updateUrl, $scope.requestData, function (data) {
             ngNotify.set('Site ' + blockFeed.name + ' has updated', {
                 type: "success",
                 position: 'top',
@@ -202,7 +202,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
         });
     };
 
-    entityService.get(loadListUrl, function (data) {
+    service.get(loadListUrl, function (data) {
         console.log('get all web sites');
         $scope.websiteList = data;
     });
@@ -210,7 +210,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
 
     $scope.loadConfig = function (siteId) {
         console.log('loadConfig - ' + siteId);
-        entityService.get(loadConfigUrl + siteId, function (data) {
+        service.get(loadConfigUrl + siteId, function (data) {
             $scope.blockFeed = data.block;
 
             if (data.title != null) {
@@ -335,14 +335,14 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
 
     $scope.getListArticleById = function (id) {
         console.log('url - ' + listUrl + "/" + id);
-        entityService.get(listUrl + "/" + id, function (data) {
+        service.get(listUrl + "/" + id, function (data) {
             $scope.resultArticleList = data;
         });
     };
 
     $scope.getFile = function (id) {
         console.log('url - ' + fileNameUrl + id);
-        entityService.get(fileNameUrl + id, function (data) {
+        service.get(fileNameUrl + id, function (data) {
             $scope.fileName = data.data;
             console.log('File name - ' + data.data);
             var url = downloadUrl + data.data;
