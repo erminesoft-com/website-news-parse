@@ -164,15 +164,15 @@ public class ParserServiceImpl implements ParserService {
     }
 
     @Override
-    public IncomeListModelParser loadConfig(Long id) {
-        WebSite webSite = websiteRepository.findOne(id);
+    public IncomeListModelParser loadConfig(Long siteId) {
+        WebSite webSite = websiteRepository.findOne(siteId);
         return transformFromWebSite(webSite);
     }
 
     @Override
-    public void deleteConfig(Long id) {
-        WebSite webSite = websiteRepository.findOne(id);
-        websiteRepository.delete(id);
+    public void deleteConfig(Long siteId) {
+        WebSite webSite = websiteRepository.findOne(siteId);
+        websiteRepository.delete(siteId);
         if (webSite.isTitleEnable()) {
             ruleRepository.delete(webSite.getTitle().getId());
             if (!webSite.getTitle().getDefault()) {
@@ -210,8 +210,8 @@ public class ParserServiceImpl implements ParserService {
     }
 
     @Override
-    public List<ArticleDto> getListArticlesById(Long id) {
-        WebSite webSite = websiteRepository.findOne(id);
+    public List<ArticleDto> getListArticlesById(Long siteId) {
+        WebSite webSite = websiteRepository.findOne(siteId);
 
         if (webSite.getStrategy() == 1) {
             List<ArticleDto> result = getListByRrs(webSite.getSite());
