@@ -4,67 +4,67 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class IncomeListModelParser {
 
-    private OneBlock block;
-    private RuleOneForBlock title;
-    private RuleOneForBlock link;
-    private RuleOneForBlock image;
-    private RuleOneForBlock desc;
-    private RuleOneForBlock time;
+    private MainBlock block;
+    private RulesOneBlock title;
+    private RulesOneBlock link;
+    private RulesOneBlock image;
+    private RulesOneBlock desc;
+    private RulesOneBlock time;
 
     public IncomeListModelParser() {
     }
 
     @JsonProperty(value = "block")
-    public OneBlock getBlock() {
+    public MainBlock getBlock() {
         return block;
     }
 
-    public void setBlock(OneBlock block) {
+    public void setBlock(MainBlock block) {
         this.block = block;
     }
 
     @JsonProperty(value = "title")
-    public RuleOneForBlock getTitle() {
+    public RulesOneBlock getTitle() {
         return title;
     }
 
-    public void setTitle(RuleOneForBlock title) {
+    public void setTitle(RulesOneBlock title) {
         this.title = title;
     }
 
     @JsonProperty(value = "link")
-    public RuleOneForBlock getLink() {
+    public RulesOneBlock getLink() {
         return link;
     }
 
-    public void setLink(RuleOneForBlock link) {
+    public void setLink(RulesOneBlock link) {
         this.link = link;
     }
 
     @JsonProperty(value = "image")
-    public RuleOneForBlock getImage() {
+    public RulesOneBlock getImage() {
         return image;
     }
 
-    public void setImage(RuleOneForBlock image) {
+    public void setImage(RulesOneBlock image) {
         this.image = image;
     }
 
     @JsonProperty(value = "desc")
-    public RuleOneForBlock getDesc() {
+    public RulesOneBlock getDesc() {
         return desc;
     }
 
-    public void setDesc(RuleOneForBlock desc) {
+    public void setDesc(RulesOneBlock desc) {
         this.desc = desc;
     }
 
     @JsonProperty(value = "time")
-    public RuleOneForBlock getTime() {
+    public RulesOneBlock getTime() {
         return time;
     }
 
-    public void setTime(RuleOneForBlock time) {
+    public void setTime(RulesOneBlock time) {
         this.time = time;
     }
 }

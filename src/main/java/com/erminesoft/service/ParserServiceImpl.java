@@ -44,8 +44,8 @@ public class ParserServiceImpl implements ParserService {
     private TimeService timeService;
 
     @Override
-    public Map<String, Object> getFeed(OneBlock oneBlock) {
-        Elements elements = parser.getElementsBySiteAndStrategy(oneBlock);
+    public Map<String, Object> getFeed(MainBlock mainBlock) {
+        Elements elements = parser.getElementsBySiteAndStrategy(mainBlock);
         if (elements != null && elements.size() != 0) {
             Map<String, Object> result = new HashMap<>();
             result.put("feed", elements.get(0).toString());
@@ -158,7 +158,7 @@ public class ParserServiceImpl implements ParserService {
     }
 
     @Override
-    public List<OneBlock> getListWebSite() {
+    public List<MainBlock> getListWebSite() {
         List<WebSite> webSites = websiteRepository.findAll();
         return transformFromWebSitesList(webSites);
     }
@@ -267,8 +267,8 @@ public class ParserServiceImpl implements ParserService {
         return result;
     }
 
-    private OneBlock transform(WebSite webSite) {
-        OneBlock oneBlock = new OneBlock();
+    private MainBlock transform(WebSite webSite) {
+        MainBlock oneBlock = new MainBlock();
         oneBlock.setSite(webSite.getSite());
         oneBlock.setStrategy(webSite.getStrategy());
         oneBlock.setKey(webSite.getKeyFirst());
@@ -282,14 +282,14 @@ public class ParserServiceImpl implements ParserService {
     }
 
     @Override
-    public Boolean updateConfig(IncomeListModelParser incomeListModelParse) {
+    public boolean updateConfig(IncomeListModelParser incomeListModelParse) {
         WebSite incomeSite = transformFromIncomeListModelParseToWebSite(incomeListModelParse);
         websiteRepository.save(incomeSite);
         return true;
     }
 
-    private RuleOneForBlock transform(Rule rule) {
-        RuleOneForBlock result = new RuleOneForBlock();
+    private RulesOneBlock transform(Rule rule) {
+        RulesOneBlock result = new RulesOneBlock();
         result.setDefault(rule.getDefault());
         result.setStrategy(rule.getStrategy());
         if (rule.getKey() != null) {
@@ -303,7 +303,7 @@ public class ParserServiceImpl implements ParserService {
     private IncomeListModelParser transformFromWebSite(WebSite webSite) {
         IncomeListModelParser result = new IncomeListModelParser();
 
-        OneBlock oneBlock = new OneBlock();
+        MainBlock oneBlock = new MainBlock();
 
         oneBlock.setId(webSite.getId());
         oneBlock.setSite(webSite.getSite());
@@ -313,7 +313,7 @@ public class ParserServiceImpl implements ParserService {
         if (oneBlock.getStrategy() == 1) {
             result.setBlock(oneBlock);
             if (webSite.isImageEnable()) {
-                RuleOneForBlock imageDeafult = new RuleOneForBlock();
+                RulesOneBlock imageDeafult = new RulesOneBlock();
                 imageDeafult.setEnable(true);
                 imageDeafult.setId(webSite.getImage().getId());
                 KeyDto keyDto = new KeyDto();
@@ -332,7 +332,7 @@ public class ParserServiceImpl implements ParserService {
         result.setBlock(oneBlock);
 
 
-        RuleOneForBlock title = new RuleOneForBlock();
+        RulesOneBlock title = new RulesOneBlock();
         title.setEnable(webSite.isTitleEnable());
         if (webSite.isTitleEnable()) {
             title.setId(webSite.getTitle().getId());
@@ -349,7 +349,7 @@ public class ParserServiceImpl implements ParserService {
         }
         result.setTitle(title);
 
-        RuleOneForBlock link = new RuleOneForBlock();
+        RulesOneBlock link = new RulesOneBlock();
         link.setEnable(webSite.isLinkEnable());
         if (webSite.isLinkEnable()) {
             link.setId(webSite.getLink().getId());
@@ -370,7 +370,7 @@ public class ParserServiceImpl implements ParserService {
         }
         result.setLink(link);
 
-        RuleOneForBlock image = new RuleOneForBlock();
+        RulesOneBlock image = new RulesOneBlock();
         image.setEnable(webSite.isImageEnable());
         if (webSite.isImageEnable()) {
             image.setId(webSite.getImage().getId());
@@ -395,7 +395,7 @@ public class ParserServiceImpl implements ParserService {
         }
         result.setImage(image);
 
-        RuleOneForBlock desc = new RuleOneForBlock();
+        RulesOneBlock desc = new RulesOneBlock();
         desc.setEnable(webSite.isDescEnable());
         if (webSite.isDescEnable()) {
             desc.setId(webSite.getDesc().getId());
@@ -412,7 +412,7 @@ public class ParserServiceImpl implements ParserService {
         }
         result.setDesc(desc);
 
-        RuleOneForBlock time = new RuleOneForBlock();
+        RulesOneBlock time = new RulesOneBlock();
         time.setEnable(webSite.isTimeEnable());
         if (webSite.isTimeEnable()) {
             time.setId(webSite.getDate().getId());
@@ -432,9 +432,9 @@ public class ParserServiceImpl implements ParserService {
         return result;
     }
 
-    private List<OneBlock> transformFromWebSitesList(List<WebSite> list) {
+    private List<MainBlock> transformFromWebSitesList(List<WebSite> list) {
         return list.stream().map(x -> {
-            OneBlock oneBlock = new OneBlock();
+            MainBlock oneBlock = new MainBlock();
             oneBlock.setId(x.getId());
             oneBlock.setSite(x.getSite());
             oneBlock.setName(x.getName());
@@ -444,7 +444,7 @@ public class ParserServiceImpl implements ParserService {
 
     private WebSite transformFromIncomeListModelParseToWebSite(IncomeListModelParser incomeListModelParse) {
 
-        OneBlock block = incomeListModelParse.getBlock();
+        MainBlock block = incomeListModelParse.getBlock();
 
         WebSite webSite = new WebSite();
         if (incomeListModelParse.getBlock().getId() != null) {

@@ -1,7 +1,7 @@
 package com.erminesoft.worker;
 
-import com.erminesoft.dto.OneBlock;
-import com.erminesoft.dto.RuleOneForBlock;
+import com.erminesoft.dto.MainBlock;
+import com.erminesoft.dto.RulesOneBlock;
 import org.jsoup.select.Elements;
 
 public interface Worker {
@@ -19,7 +19,7 @@ public interface Worker {
      * 8. by double select (First - attribute = class, value=key, Second attribute and value starting)
      * @return elements(jsoup library class)
      */
-    Elements getElementsBySiteAndStrategy(OneBlock oneBlock);
+    Elements getElementsBySiteAndStrategy(MainBlock oneBlock);
 
     /**
      *@params oneBlockNewsDto, inComeText
@@ -29,7 +29,7 @@ public interface Worker {
      * 3. by attribute and attribute value((<item attribute="value"></item>)
      * @return string
      */
-    String getOneTitleFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText);
+    String getOneTitleFromBlockHtml(RulesOneBlock oneBlockNewsDto, String incomingText);
 
     /**
      *@params oneBlockNewsDto, inComeText
@@ -39,7 +39,7 @@ public interface Worker {
      * 3. by attribute and attribute value((<item attribute="value"></item>)
      * @return string
      */
-    String getOneLinkFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText);
+    String getOneLinkFromBlockHtml(RulesOneBlock oneBlockNewsDto, String incomingText);
 
     /**
      *@params oneBlockNewsDto, inComeText
@@ -49,7 +49,7 @@ public interface Worker {
      * 3. by attribute and attribute value((<item attribute="value"></item>)
      * @return string
      */
-    String getOneImageFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText);
+    String getOneImageFromBlockHtml(RulesOneBlock oneBlockNewsDto, String incomingText);
 
     /**
      *@params oneBlockNewsDto, inComeText
@@ -59,7 +59,7 @@ public interface Worker {
      * 3. by attribute and attribute value((<item attribute="value"></item>)
      * @return string
      */
-    String getOneDescriptionFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText);
+    String getOneDescriptionFromBlockHtml(RulesOneBlock oneBlockNewsDto, String incomingText);
 
     /**
      *@params oneBlockNewsDto, inComeText
@@ -69,5 +69,5 @@ public interface Worker {
      * 3. by attribute and attribute value((<item attribute="value"></item>)
      * @return string
      */
-    String getOneTimeFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText);
+    String getOneTimeFromBlockHtml(RulesOneBlock oneBlockNewsDto, String incomingText);
 }

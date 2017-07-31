@@ -2,7 +2,7 @@ package com.erminesoft.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class OneBlock {
+public class MainBlock {
 
     private Long id;
     private String site;
@@ -11,7 +11,7 @@ public class OneBlock {
     private String key;
     private String keySecond;
 
-    public OneBlock() {
+    public MainBlock() {
     }
 
     @JsonProperty("id")

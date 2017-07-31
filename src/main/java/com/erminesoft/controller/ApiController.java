@@ -2,7 +2,7 @@ package com.erminesoft.controller;
 
 import com.erminesoft.dto.ArticleDto;
 import com.erminesoft.dto.IncomeListModelParser;
-import com.erminesoft.dto.OneBlock;
+import com.erminesoft.dto.MainBlock;
 import com.erminesoft.service.FileService;
 import com.erminesoft.service.ParserService;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class ApiController {
      */
     @RequestMapping(value = "/feed", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> getFeedBlock(
-            @RequestBody OneBlock oneBlock ) {
+            @RequestBody MainBlock oneBlock ) {
         logger.info("getOneFeedBlock with site = {}, strategy = {}", oneBlock.getSite(), oneBlock.getStrategy());
         Map<String, Object> oneFeed = parserService.getFeed(oneBlock);
         logger.info("Exit feed {}", oneFeed != null ? oneFeed.get("feed") : null);
@@ -194,12 +194,12 @@ public class ApiController {
     /**
      * Load list web-site
      *
-     * @return List<OneBlock>
+     * @return List<MainBlock>
      */
     @RequestMapping(value = "/load_list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<OneBlock> loadListWebSite() {
+    public List<MainBlock> loadListWebSite() {
         logger.info("Entering loadListWebSite()");
-        List<OneBlock> result = parserService.getListWebSite();
+        List<MainBlock> result = parserService.getListWebSite();
         logger.info("Exit loadListWebSite() size result = {} ", result.size());
         return result;
     }

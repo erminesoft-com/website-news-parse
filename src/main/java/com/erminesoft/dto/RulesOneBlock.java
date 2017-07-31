@@ -2,7 +2,7 @@ package com.erminesoft.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class RuleOneForBlock {
+public class RulesOneBlock {
 
     private Long id;
 
@@ -16,7 +16,7 @@ public class RuleOneForBlock {
 
     private boolean isEnable;
 
-    public RuleOneForBlock() {
+    public RulesOneBlock() {
     }
 
     @JsonProperty("id")
@@ -75,7 +75,7 @@ public class RuleOneForBlock {
 
     @Override
     public String toString() {
-        return "RuleOneForBlock{" +
+        return "RulesOneBlock{" +
                 "isDefault=" + isDefault +
                 ", strategy=" + strategy +
                 ", key=" + key +

@@ -1,12 +1,12 @@
 package com.erminesoft.worker;
 
+import com.erminesoft.dto.MainBlock;
+import com.erminesoft.dto.RulesOneBlock;
+import com.erminesoft.exception.CommonProblemException;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
-import com.erminesoft.dto.OneBlock;
-import com.erminesoft.dto.RuleOneForBlock;
-import com.erminesoft.exception.CommonProblemException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,7 +31,7 @@ public class WorkerImpl implements Worker {
 
 
     @Override
-    public Elements getElementsBySiteAndStrategy(OneBlock oneBlock) {
+    public Elements getElementsBySiteAndStrategy(MainBlock oneBlock) {
         logger.info("Enter getElementsBySIteAndStrategy with site {}, strategy = {}", oneBlock.getSite(), oneBlock.getStrategy());
 
         Document doc;
@@ -101,7 +101,7 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public String getOneTitleFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText) {
+    public String getOneTitleFromBlockHtml(RulesOneBlock oneBlockNewsDto, String incomingText) {
 
         if (oneBlockNewsDto.isDefault()) {
             logger.info("Parse one title block by default");
@@ -140,7 +140,7 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public String getOneLinkFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText) {
+    public String getOneLinkFromBlockHtml(RulesOneBlock oneBlockNewsDto, String incomingText) {
 
         if (oneBlockNewsDto.isDefault()) {
             logger.info("Parse one block for link by default");
@@ -188,7 +188,7 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public String getOneImageFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText) {
+    public String getOneImageFromBlockHtml(RulesOneBlock oneBlockNewsDto, String incomingText) {
         logger.info("Entering getOneImageFromBlockHtml()");
         if (oneBlockNewsDto == null) return null;
 
@@ -248,7 +248,7 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public String getOneDescriptionFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText) {
+    public String getOneDescriptionFromBlockHtml(RulesOneBlock oneBlockNewsDto, String incomingText) {
         if (oneBlockNewsDto == null) return null;
 
         if (oneBlockNewsDto.isDefault()) {
@@ -263,8 +263,8 @@ public class WorkerImpl implements Worker {
             }
             return desc;
         }
-        logger.info("Parse one block by default with key one = {}", oneBlockNewsDto.getKey().getOne());
-        logger.info("Parse one block by default with key two = {}", oneBlockNewsDto.getKey().getTwo());
+        logger.info("Parse one block by default with key one = {}, two = {}", oneBlockNewsDto.getKey().getOne(),
+                oneBlockNewsDto.getKey().getTwo());
 
         String result = null;
 
@@ -288,7 +288,7 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public String getOneTimeFromBlockHtml(RuleOneForBlock oneBlockNewsDto, String incomingText) {
+    public String getOneTimeFromBlockHtml(RulesOneBlock oneBlockNewsDto, String incomingText) {
         if (oneBlockNewsDto == null) return null;
         logger.info("Entering getOneTimeFromBlockHtml() with strategy = {}", oneBlockNewsDto.getStrategy());
 
@@ -304,8 +304,8 @@ public class WorkerImpl implements Worker {
             }
             return time;
         }
-        logger.info("Parse one block by default with key one = {}", oneBlockNewsDto.getKey().getOne());
-        logger.info("Parse one block by default with key two = {}", oneBlockNewsDto.getKey().getTwo());
+        logger.info("Parse one block by default with key one = {}, two = {}", oneBlockNewsDto.getKey().getOne(),
+                oneBlockNewsDto.getKey().getTwo());
 
         String result = null;
 

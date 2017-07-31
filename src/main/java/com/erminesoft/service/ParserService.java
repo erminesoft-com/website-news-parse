@@ -2,14 +2,14 @@ package com.erminesoft.service;
 
 import com.erminesoft.dto.ArticleDto;
 import com.erminesoft.dto.IncomeListModelParser;
-import com.erminesoft.dto.OneBlock;
+import com.erminesoft.dto.MainBlock;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ParserService {
 
-    Map<String, Object> getFeed(OneBlock oneBlock);
+    Map<String, Object> getFeed(MainBlock mainBlock);
 
     String getTitle(IncomeListModelParser incomeModelParse);
 
@@ -25,7 +25,7 @@ public interface ParserService {
 
     IncomeListModelParser saveConfig(IncomeListModelParser incomeListModelParse);
 
-    List<OneBlock> getListWebSite();
+    List<MainBlock> getListWebSite();
 
     IncomeListModelParser loadConfig(Long id);
 
@@ -33,5 +33,5 @@ public interface ParserService {
 
     List<ArticleDto> getListArticlesById(Long id);
 
-    Boolean updateConfig(IncomeListModelParser incomeListModelParse);
+    boolean updateConfig(IncomeListModelParser incomeListModelParse);
 }

@@ -13,7 +13,7 @@ public class KeyDto {
     public KeyDto() {
     }
 
-    public KeyDto( String one, String two, String linkPrefix, String defaultLink) {
+    public KeyDto(String one, String two, String linkPrefix, String defaultLink) {
         this.one = one;
         this.two = two;
         this.linkPrefix = linkPrefix;
