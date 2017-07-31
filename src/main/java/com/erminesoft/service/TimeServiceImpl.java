@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.erminesoft.constants.TimeConstants.*;
 
 @Service
 public class TimeServiceImpl implements TimeService {
@@ -64,9 +64,6 @@ public class TimeServiceImpl implements TimeService {
     }
 
     private String definePatten(String time) {
-        List<String> patterns = Arrays.asList("dd/MM/yyyy", "E, dd MMM yyyy HH:mm:ss", "dd-mm-yyyy hh:mm a", "MMM dd, yyyy",
-                "yyyy-MM-dd'T'HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss Z", "MM/dd/yy", "dd MMM, yyyy", "EEE, dd/mm/yyyy",
-                "d MMMM yyyy | h:mm a", "dd.MM.yyyy", "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", "yyyy-MM-dd'T'HH:mm:ssXXX", "EEEE, dd/mm/yyyy");
         for (String pattern : patterns) {
             if (checkDatePattern(pattern, time)) return pattern;
         }
@@ -79,29 +76,29 @@ public class TimeServiceImpl implements TimeService {
 
         Date time = null;
 
-        if (pubDay.contains("Yesterday")) {
+        if (pubDay.contains(YESTERDAY)) {
             time = DateTime.now().minusDays(1).toDate();
             return time;
         }
 
-        if (pubDay.contains("Today")) {
+        if (pubDay.contains(TODAY)) {
             time = new Date();
             return time;
         }
 
-        if (pubDay.contains("hours") || pubDay.contains("hour")) {
+        if (pubDay.contains(HOURS) || pubDay.contains(HOUR)) {
             int number = getNumberOfString(pubDay);
             time = DateTime.now().minusHours(number).toDate();
             return time;
         }
 
-        if (pubDay.contains("day") || pubDay.contains("days")) {
+        if (pubDay.contains(DAY) || pubDay.contains(DAYS)) {
             int number = getNumberOfString(pubDay);
             time = DateTime.now().minusDays(number).toDate();
             return time;
         }
 
-        if (pubDay.contains("week") || pubDay.contains("weeks")) {
+        if (pubDay.contains(WEEK) || pubDay.contains(WEEKS)) {
             int number = getNumberOfString(pubDay);
             time = DateTime.now().minusWeeks(number).toDate();
             return time;

@@ -19,6 +19,8 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.erminesoft.constants.ParseConstants.*;
+
 @Service
 public class WorkerImpl implements Worker {
 
@@ -30,7 +32,7 @@ public class WorkerImpl implements Worker {
 
     @Override
     public Elements getElementsBySiteAndStrategy(OneBlock oneBlock) {
-        logger.info("Enter getElementsBySIteAndStategy with site {}, strategy = {}", oneBlock.getSite(), oneBlock.getStrategy());
+        logger.info("Enter getElementsBySIteAndStrategy with site {}, strategy = {}", oneBlock.getSite(), oneBlock.getStrategy());
 
         Document doc;
         try {
@@ -62,13 +64,13 @@ public class WorkerImpl implements Worker {
                 break;
             case 7:
                 Elements result = new Elements();
-                Elements temp = doc.getElementsByAttributeValue("class", oneBlock.getKey());
+                Elements temp = doc.getElementsByAttributeValue(TAG_CLASS, oneBlock.getKey());
                 temp.forEach(x -> x.select(oneBlock.getKeySecond()).forEach(y -> result.add(y)));
                 elements = result;
                 break;
             case 8:
-                elements = doc.getElementsByAttributeValue("class", oneBlock.getKey())
-                        .first().getElementsByAttributeValueStarting("class", oneBlock.getKeySecond());
+                elements = doc.getElementsByAttributeValue(TAG_CLASS, oneBlock.getKey())
+                        .first().getElementsByAttributeValueStarting(TAG_CLASS, oneBlock.getKeySecond());
                 break;
             default:
                 logger.warn("Undefined strategy in feed");
@@ -106,15 +108,15 @@ public class WorkerImpl implements Worker {
             Document doc = Jsoup.parse(inComeText);
             String title;
             try {
-                title = doc.select("a").first().attr("title");
+                title = doc.select(TAG_A).first().attr(TAG_TITLE);
             } catch (NullPointerException e) {
                 logger.warn("Error parse title by default");
                 return null;
             }
             return title;
         }
-        logger.info("Parse one block by default with key one = {}", oneBlockNewsDto.getKey().getOne());
-        logger.info("Parse one block by default with key two = {}", oneBlockNewsDto.getKey().getTwo());
+        logger.info("Parse one block by default with key one = {}, two = {}", oneBlockNewsDto.getKey().getOne(),
+                oneBlockNewsDto.getKey().getTwo());
 
         String result = null;
 
@@ -145,7 +147,7 @@ public class WorkerImpl implements Worker {
             Document doc = Jsoup.parse(inComeText);
             String link;
             try {
-                link = doc.select("a").attr("href");
+                link = doc.select(TAG_A).attr(TAG_HREF);
             } catch (NullPointerException e) {
                 logger.warn("Error parse link by default");
                 return null;
@@ -170,20 +172,18 @@ public class WorkerImpl implements Worker {
                 result = doc.select(oneBlockNewsDto.getKey().getOne()).text();
                 if (oneBlockNewsDto.getKey().getLinkPrefix() != null) {
                     result = oneBlockNewsDto.getKey().getLinkPrefix() + result;
-                    logger.info("getOneLinkFromBlockHtml() with prefix, link = {}", result);
                 }
-
                 break;
             case 3:
                 logger.info("Get link by strategy 3");
-                Document doc1 = Jsoup.parse(inComeText);
-                result = doc1.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
+                Document docCase3 = Jsoup.parse(inComeText);
+                result = docCase3.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
                 if (oneBlockNewsDto.getKey().getLinkPrefix() != null) {
                     result = oneBlockNewsDto.getKey().getLinkPrefix() + result;
-                    logger.info("getOneLinkFromBlockHtml() with prefix, link = {}", result);
                 }
                 break;
         }
+        logger.info("getOneLinkFromBlockHtml() with prefix, link = {}", result);
         return result;
     }
 
@@ -204,15 +204,15 @@ public class WorkerImpl implements Worker {
             Document doc = Jsoup.parse(inComeText);
             String image;
             try {
-                image = doc.select("img").attr("abs:src");
+                image = doc.select(TAG_IMG).attr(TAG_ABS_SRC);
             } catch (NullPointerException e) {
                 logger.warn("Error parse image by default");
                 return null;
             }
             return image;
         }
-        logger.info("Parse one block by default with key one = {}", oneBlockNewsDto.getKey().getOne());
-        logger.info("Parse one block by default with key two = {}", oneBlockNewsDto.getKey().getTwo());
+        logger.info("Parse one block by default with key one = {}, two = {}", oneBlockNewsDto.getKey().getOne(),
+                oneBlockNewsDto.getKey().getTwo());
 
         String result = null;
 
@@ -235,8 +235,8 @@ public class WorkerImpl implements Worker {
                 break;
             case 3:
                 logger.info("Get image by strategy 3");
-                Document doc1 = Jsoup.parse(inComeText);
-                result = doc1.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
+                Document docCase3 = Jsoup.parse(inComeText);
+                result = docCase3.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
                 if (oneBlockNewsDto.getKey().getLinkPrefix() != null) {
                     result = oneBlockNewsDto.getKey().getLinkPrefix() + result;
                     logger.info("getOneImageFromBlockHtml() with prefix, link = {}", result);
@@ -256,7 +256,7 @@ public class WorkerImpl implements Worker {
             Document doc = Jsoup.parse(inComeText);
             String desc;
             try {
-                desc = doc.select("p").text();
+                desc = doc.select(TAG_P).text();
             } catch (NullPointerException e) {
                 logger.warn("Error parse desc by default");
                 return null;
@@ -270,17 +270,18 @@ public class WorkerImpl implements Worker {
 
         switch (oneBlockNewsDto.getStrategy()) {
             case 1:
+                logger.info("Get desc by strategy 1");
                 result = getTextFromHtml(inComeText, oneBlockNewsDto.getKey().getOne(), oneBlockNewsDto.getKey().getTwo());
                 break;
             case 2:
                 logger.info("Get desc by strategy 2");
-                Document doc1 = Jsoup.parse(inComeText);
-                result = doc1.select(oneBlockNewsDto.getKey().getOne()).text();
+                Document document = Jsoup.parse(inComeText);
+                result = document.select(oneBlockNewsDto.getKey().getOne()).text();
                 break;
             case 3:
                 logger.info("Get desc by strategy 2");
-                Document doc = Jsoup.parse(inComeText);
-                result = doc.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
+                Document docCase3 = Jsoup.parse(inComeText);
+                result = docCase3.select(oneBlockNewsDto.getKey().getOne()).attr(oneBlockNewsDto.getKey().getTwo());
                 break;
         }
         return result;
@@ -296,7 +297,7 @@ public class WorkerImpl implements Worker {
             Document doc = Jsoup.parse(inComeText);
             String time;
             try {
-                time = doc.select("time").attr("datetime");
+                time = doc.select(TAG_TIME).attr(TAG_DATETIME);
             } catch (NullPointerException e) {
                 logger.warn("Error parse time by default");
                 return null;
