@@ -27,4 +27,4 @@ run jar file (java -jar ./build/libs/site-parser-1.0.jar)
 3. Obtain list correct articles.<br>
 4. Save configuration.<br>
 
-<a href="localhost">Example</a
+<a href="localhost">Example</a>
