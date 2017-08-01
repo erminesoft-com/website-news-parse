@@ -19,8 +19,8 @@
         </encoder>
     </appender>
 
-    <root level="warn">
-        <appender-ref ref="FILE"/>
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
     </root>
 
 </configuration>
