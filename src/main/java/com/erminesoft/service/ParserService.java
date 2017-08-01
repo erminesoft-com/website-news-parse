@@ -13,7 +13,7 @@ public interface ParserService {
      *Get date from string.
      *
      *@param mainBlock
-     *@return map(feed contain html block, count this blocks)
+     *@return map
      */
     Map<String, Object> getFeed(MainBlock mainBlock);
 
