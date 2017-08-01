@@ -22,7 +22,7 @@ run jar file (java -jar ./build/libs/site-parser-1.0.jar)
 </p>
 
 <h3>Manual</h3>
-1. You need to get 1 news block in HTML code.
-2. Take from this code title, link, image link(if present), description(if present), time (if present).
-3. Obtain list correct articles.
-4. Save configuration.
+1. You need to get 1 news block in HTML code.<br>
+2. Take from this code title, link, image link(if present), description(if present), time (if present).<br>
+3. Obtain list correct articles.<br>
+4. Save configuration.<br>
