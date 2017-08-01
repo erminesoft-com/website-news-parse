@@ -113,10 +113,10 @@ public class ParserServiceImpl implements ParserService {
         }
 
         List<ArticleDto> result = new ArrayList<>();
-        int i = 1;
+        int[] i = {1};
         Elements elements = parser.getElementsBySiteAndStrategy(incomeListModelParse.getBlock());
 
-        for (Element element : elements) {
+        elements.forEach(element ->  {
             ArticleDto articleDto = new ArticleDto();
 
             String block = element.toString();
@@ -140,10 +140,10 @@ public class ParserServiceImpl implements ParserService {
 
             articleDto.setTitle(title);
             articleDto.setLink(link);
-            articleDto.setId(i++);
+            articleDto.setId(i[0]++);
 
             result.add(articleDto);
-        }
+        });
         return result;
     }
 
@@ -226,11 +226,11 @@ public class ParserServiceImpl implements ParserService {
         }
 
         List<ArticleDto> result = new ArrayList<>();
-        int i = 1;
+        int[] i = {1};
 
         Elements elements = parser.getElementsBySiteAndStrategy(transform(webSite));
 
-        for (Element element : elements) {
+        elements.forEach(element -> {
             ArticleDto articleDto = new ArticleDto();
 
             String block = element.toString();
@@ -261,9 +261,9 @@ public class ParserServiceImpl implements ParserService {
                 articleDto.setDate(finishTime);
             }
 
-            articleDto.setId(i++);
+            articleDto.setId(i[0]++);
             result.add(articleDto);
-        }
+        });
         return result;
     }
 
@@ -623,10 +623,10 @@ public class ParserServiceImpl implements ParserService {
             URL feedUrl = new URL(site);
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(new XmlReader(feedUrl));
-            int id = 1;
+            int[] id = {1};
             feed.getEntries().forEach(syndEntry -> {
                 ArticleDto articleDto = new ArticleDto();
-                articleDto.setId(id + 1);
+                articleDto.setId(id[0]++);
                 articleDto.setTitle(syndEntry.getTitle());
                 articleDto.setLink(syndEntry.getLink());
                 articleDto.setDescription(syndEntry.getDescription().getValue());
