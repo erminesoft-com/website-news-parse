@@ -1,7 +1,12 @@
 package com.erminesoft.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "rule")
 public class Rule {
@@ -20,40 +25,4 @@ public class Rule {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "key_id")
     private Key key;
-
-    public Rule() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Boolean getDefault() {
-        return isDefault;
-    }
-
-    public void setDefault(Boolean aDefault) {
-        isDefault = aDefault;
-    }
-
-    public Integer getStrategy() {
-        return Strategy;
-    }
-
-    public void setStrategy(Integer strategy) {
-        Strategy = strategy;
-    }
-
-    public Key getKey() {
-        return key;
-    }
-
-    public void setKey(Key key) {
-        this.key = key;
-    }
-
 }

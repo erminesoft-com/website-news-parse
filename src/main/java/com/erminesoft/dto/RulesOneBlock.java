@@ -1,86 +1,28 @@
 package com.erminesoft.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class RulesOneBlock {
 
+    @JsonProperty("id")
     private Long id;
 
+    @JsonProperty("default")
     private boolean isDefault;
 
+    @JsonProperty("strategy")
     private Integer strategy;
 
+    @JsonProperty("key")
     private KeyDto key;
 
+    @JsonProperty("pattern")
     private String timePattern;
 
-    private boolean isEnable;
-
-    public RulesOneBlock() {
-    }
-
-    @JsonProperty("id")
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @JsonProperty("default")
-    public boolean isDefault() {
-        return isDefault;
-    }
-
-    public void setDefault(boolean aDefault) {
-        isDefault = aDefault;
-    }
-
-    @JsonProperty("strategy")
-    public Integer getStrategy() {
-        return strategy;
-    }
-
-    public void setStrategy(Integer strategy) {
-        this.strategy = strategy;
-    }
-
-    @JsonProperty("key")
-    public KeyDto getKey() {
-        return key;
-    }
-
-    public void setKey(KeyDto key) {
-        this.key = key;
-    }
-
-    @JsonProperty("pattern")
-    public String getTimePattern() {
-        return timePattern;
-    }
-
-    public void setTimePattern(String timePattern) {
-        this.timePattern = timePattern;
-    }
-
     @JsonProperty("enable")
-    public boolean isEnable() {
-        return isEnable;
-    }
-
-    public void setEnable(boolean enable) {
-        isEnable = enable;
-    }
-
-    @Override
-    public String toString() {
-        return "RulesOneBlock{" +
-                "isDefault=" + isDefault +
-                ", strategy=" + strategy +
-                ", key=" + key +
-                ", timePattern='" + timePattern + '\'' +
-                ", isEnable=" + isEnable +
-                '}';
-    }
+    private boolean isEnable;
 }

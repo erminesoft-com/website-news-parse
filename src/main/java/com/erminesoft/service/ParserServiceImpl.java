@@ -8,6 +8,7 @@ import com.erminesoft.repository.KeyRepository;
 import com.erminesoft.repository.RuleRepository;
 import com.erminesoft.repository.WebsiteRepository;
 import com.erminesoft.worker.Worker;
+import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
@@ -20,7 +21,6 @@ import org.springframework.util.StringUtils;
 
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ParserServiceImpl implements ParserService {
@@ -174,34 +174,34 @@ public class ParserServiceImpl implements ParserService {
         websiteRepository.delete(siteId);
         if (webSite.isTitleEnable()) {
             ruleRepository.delete(webSite.getTitle().getId());
-            if (!webSite.getTitle().getDefault()) {
+            if (!webSite.getTitle().getIsDefault()) {
                 keyRepository.delete(webSite.getTitle().getKey().getId());
             }
         }
 
         if (webSite.isLinkEnable()) {
             ruleRepository.delete(webSite.getLink().getId());
-            if (!webSite.getLink().getDefault()) {
+            if (!webSite.getLink().getIsDefault()) {
                 keyRepository.delete(webSite.getLink().getKey().getId());
             }
         }
 
         if (webSite.isImageEnable()) {
             ruleRepository.delete(webSite.getImage().getId());
-            if (!webSite.getImage().getDefault()) {
+            if (!webSite.getImage().getIsDefault()) {
                 keyRepository.delete(webSite.getImage().getKey().getId());
             }
         }
 
         if (webSite.isDescEnable()) {
-            if (!webSite.getDesc().getDefault()) {
+            if (!webSite.getDesc().getIsDefault()) {
                 ruleRepository.delete(webSite.getDesc().getId());
                 keyRepository.delete(webSite.getDesc().getKey().getId());
             }
         }
 
         if (webSite.isTimeEnable()) {
-            if (!webSite.getDate().getDefault()) {
+            if (!webSite.getDate().getIsDefault()) {
                 ruleRepository.delete(webSite.getDate().getId());
                 keyRepository.delete(webSite.getDate().getKey().getId());
             }
@@ -209,14 +209,14 @@ public class ParserServiceImpl implements ParserService {
     }
 
     @Override
-    public List<ArticleDto> getListArticlesById(Long siteId) {
-        WebSite webSite = websiteRepository.findOne(siteId);
+    public List<ArticleDto> getListArticlesById(Long id) {
+        WebSite webSite = websiteRepository.findOne(id);
 
         if (webSite.getStrategy() == 1) {
             List<ArticleDto> result = getListByRrs(webSite.getSite());
-            try {
-                if (webSite.getImage().getKey().getDefaultLink() != null) {
-                    result.forEach(x -> x.setImageUrl(webSite.getImage().getKey().getDefaultLink()));
+            try{
+                if (webSite.getImage().getKey().getDefaultLink() != null){
+                    result.forEach(x-> x.setImageUrl(webSite.getImage().getKey().getDefaultLink()));
                 }
             } catch (NullPointerException e) {
                 logger.warn("Get new by rss without default image");
@@ -289,7 +289,7 @@ public class ParserServiceImpl implements ParserService {
 
     private RulesOneBlock transform(Rule rule) {
         RulesOneBlock result = new RulesOneBlock();
-        result.setDefault(rule.getDefault());
+        result.setDefault(rule.getIsDefault());
         result.setStrategy(rule.getStrategy());
         if (rule.getKey() != null) {
             KeyDto keyDto = new KeyDto(rule.getKey().getKeyOne(), rule.getKey().getKeyTwo(), rule.getKey().getPrefix(),
@@ -335,7 +335,7 @@ public class ParserServiceImpl implements ParserService {
         title.setEnable(webSite.isTitleEnable());
         if (webSite.isTitleEnable()) {
             title.setId(webSite.getTitle().getId());
-            title.setDefault(webSite.getTitle().getDefault());
+            title.setDefault(webSite.getTitle().getIsDefault());
             if (!title.isDefault()) {
                 title.setStrategy(webSite.getTitle().getStrategy());
                 KeyDto keyDto = new KeyDto();
@@ -352,7 +352,7 @@ public class ParserServiceImpl implements ParserService {
         link.setEnable(webSite.isLinkEnable());
         if (webSite.isLinkEnable()) {
             link.setId(webSite.getLink().getId());
-            link.setDefault(webSite.getLink().getDefault());
+            link.setDefault(webSite.getLink().getIsDefault());
             if (!link.isDefault()) {
                 link.setStrategy(webSite.getLink().getStrategy());
                 KeyDto keyDto = new KeyDto();
@@ -373,7 +373,7 @@ public class ParserServiceImpl implements ParserService {
         image.setEnable(webSite.isImageEnable());
         if (webSite.isImageEnable()) {
             image.setId(webSite.getImage().getId());
-            image.setDefault(webSite.getImage().getDefault());
+            image.setDefault(webSite.getImage().getIsDefault());
             if (!image.isDefault()) {
                 image.setStrategy(webSite.getImage().getStrategy());
                 KeyDto keyDto = new KeyDto();
@@ -398,7 +398,7 @@ public class ParserServiceImpl implements ParserService {
         desc.setEnable(webSite.isDescEnable());
         if (webSite.isDescEnable()) {
             desc.setId(webSite.getDesc().getId());
-            desc.setDefault(webSite.getDesc().getDefault());
+            desc.setDefault(webSite.getDesc().getIsDefault());
             if (!desc.isDefault()) {
                 desc.setStrategy(webSite.getDesc().getStrategy());
                 KeyDto keyDto = new KeyDto();
@@ -416,7 +416,7 @@ public class ParserServiceImpl implements ParserService {
         if (webSite.isTimeEnable()) {
             time.setId(webSite.getDate().getId());
             time.setEnable(webSite.isTimeEnable());
-            time.setDefault(webSite.getDate().getDefault());
+            time.setDefault(webSite.getDate().getIsDefault());
             if (!time.isDefault()) {
                 time.setStrategy(webSite.getDate().getStrategy());
                 KeyDto keyDto = new KeyDto();
@@ -432,13 +432,15 @@ public class ParserServiceImpl implements ParserService {
     }
 
     private List<MainBlock> transformFromWebSitesList(List<WebSite> list) {
-        return list.stream().map(x -> {
+        List<MainBlock> result = new ArrayList<>();
+        list.forEach(x -> {
             MainBlock oneBlock = new MainBlock();
             oneBlock.setId(x.getId());
             oneBlock.setSite(x.getSite());
             oneBlock.setName(x.getName());
-            return oneBlock;
-        }).collect(Collectors.toList());
+            result.add(oneBlock);
+        });
+        return result;
     }
 
     private WebSite transformFromIncomeListModelParseToWebSite(IncomeListModelParser incomeListModelParse) {
@@ -452,7 +454,7 @@ public class ParserServiceImpl implements ParserService {
         webSite.setSite(block.getSite());
         webSite.setName(block.getName());
         webSite.setStrategy(block.getStrategy());
-        if (block.getKey() != null) {
+        if (block.getKey() != null){
             webSite.setKeyFirst(block.getKey());
         }
         if (block.getStrategy() > 3) {
@@ -461,11 +463,11 @@ public class ParserServiceImpl implements ParserService {
 
         if (incomeListModelParse.getTitle() != null && incomeListModelParse.getTitle().isEnable()) {
             Rule title = new Rule();
-            title.setDefault(incomeListModelParse.getTitle().isDefault());
+            title.setIsDefault(incomeListModelParse.getTitle().isDefault());
             if (incomeListModelParse.getTitle().getId() != null) {
                 title.setId(incomeListModelParse.getTitle().getId());
             }
-            if (!title.getDefault()) {
+            if (!title.getIsDefault()) {
                 title.setStrategy(incomeListModelParse.getTitle().getStrategy());
                 Key keyTitle = new Key();
                 if (incomeListModelParse.getTitle().getKey().getId() != null) {
@@ -490,11 +492,11 @@ public class ParserServiceImpl implements ParserService {
 
         if (incomeListModelParse.getLink() != null && incomeListModelParse.getLink().isEnable()) {
             Rule link = new Rule();
-            link.setDefault(incomeListModelParse.getLink().isDefault());
+            link.setIsDefault(incomeListModelParse.getLink().isDefault());
             if (incomeListModelParse.getLink().getId() != null) {
                 link.setId(incomeListModelParse.getLink().getId());
             }
-            if (!link.getDefault()) {
+            if (!link.getIsDefault()) {
                 link.setStrategy(incomeListModelParse.getLink().getStrategy());
                 Key keyLink = new Key();
                 if (incomeListModelParse.getLink().getKey().getId() != null) {
@@ -522,11 +524,11 @@ public class ParserServiceImpl implements ParserService {
 
         if (incomeListModelParse.getImage() != null && incomeListModelParse.getImage().isEnable()) {
             Rule image = new Rule();
-            image.setDefault(incomeListModelParse.getImage().isDefault());
+            image.setIsDefault(incomeListModelParse.getImage().isDefault());
             if (incomeListModelParse.getImage().getId() != null) {
                 image.setId(incomeListModelParse.getImage().getId());
             }
-            if (!image.getDefault()) {
+            if (!image.getIsDefault()) {
                 image.setStrategy(incomeListModelParse.getImage().getStrategy());
                 Key keyImage = new Key();
                 if (incomeListModelParse.getImage().getKey().getId() != null) {
@@ -559,11 +561,11 @@ public class ParserServiceImpl implements ParserService {
 
         if (incomeListModelParse.getDesc() != null && incomeListModelParse.getDesc().isEnable()) {
             Rule desc = new Rule();
-            desc.setDefault(incomeListModelParse.getDesc().isDefault());
+            desc.setIsDefault(incomeListModelParse.getDesc().isDefault());
             if (incomeListModelParse.getDesc().getId() != null) {
                 desc.setId(incomeListModelParse.getDesc().getId());
             }
-            if (!desc.getDefault()) {
+            if (!desc.getIsDefault()) {
                 desc.setStrategy(incomeListModelParse.getDesc().getStrategy());
                 Key keyDesc = new Key();
                 if (incomeListModelParse.getDesc().getKey().getId() != null) {
@@ -583,11 +585,11 @@ public class ParserServiceImpl implements ParserService {
 
         if (incomeListModelParse.getTime() != null && incomeListModelParse.getTime().isEnable()) {
             Rule time = new Rule();
-            time.setDefault(incomeListModelParse.getTime().isDefault());
+            time.setIsDefault(incomeListModelParse.getTime().isDefault());
             if (incomeListModelParse.getTime().getId() != null) {
                 time.setId(incomeListModelParse.getTime().getId());
             }
-            if (!time.getDefault()) {
+            if (!time.getIsDefault()) {
                 time.setStrategy(incomeListModelParse.getTime().getStrategy());
                 Key keyTime = new Key();
                 if (incomeListModelParse.getTime().getKey().getId() != null) {
@@ -598,7 +600,7 @@ public class ParserServiceImpl implements ParserService {
                 Key saveKeyTime = keyRepository.save(keyTime);
                 time.setKey(saveKeyTime);
             } else {
-                time.setDefault(true);
+                time.setIsDefault(true);
             }
             webSite.setTimeEnable(incomeListModelParse.getTime() != null);
             Rule saveTime = ruleRepository.save(time);
@@ -610,8 +612,8 @@ public class ParserServiceImpl implements ParserService {
         return webSite;
     }
 
-    private String getMainBlock(IncomeListModelParser incomeModelParse) {
-        Map<String, Object> oneFeed = getFeed(incomeModelParse.getBlock());
+    private String getMainBlock(IncomeListModelParser incomeModelParce) {
+        Map<String, Object> oneFeed = getFeed(incomeModelParce.getBlock());
         return (String) oneFeed.get("feed");
     }
 
@@ -622,20 +624,20 @@ public class ParserServiceImpl implements ParserService {
             URL feedUrl = new URL(site);
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(new XmlReader(feedUrl));
-            int[] id = {1};
-            feed.getEntries().forEach(syndEntry -> {
+            int id = 1;
+            for (SyndEntry syndEntry : feed.getEntries()) {
                 ArticleDto articleDto = new ArticleDto();
-                articleDto.setId(id[0]++);
+                articleDto.setId(id++);
                 articleDto.setTitle(syndEntry.getTitle());
                 articleDto.setLink(syndEntry.getLink());
                 articleDto.setDescription(syndEntry.getDescription().getValue());
                 articleDto.setDate(syndEntry.getPublishedDate().toString());
                 result.add(articleDto);
-            });
-
+            }
         } catch (Exception ex) {
             logger.warn("getListByRrs() error", ex.getLocalizedMessage());
         }
+
         logger.info("Leaving getListByRrs() size result - {}", result.size());
         return result;
     }

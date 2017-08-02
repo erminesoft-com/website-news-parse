@@ -53,18 +53,18 @@ public class FileServiceImpl implements FileService {
         header.createCell(4).setCellValue("Desc");
         header.createCell(5).setCellValue("Time");
 
-        list.forEach( articleDto -> {
+        list.forEach(articleDto -> {
             XSSFRow aRow = sheet.createRow(articleDto.getId());
             sheet.autoSizeColumn(articleDto.getId());
             aRow.createCell(0).setCellValue(articleDto.getId());
             aRow.createCell(1).setCellValue(articleDto.getTitle());
 
-            XSSFHyperlink link = (XSSFHyperlink)createHelper.createHyperlink(Hyperlink.LINK_URL);
+            XSSFHyperlink link = (XSSFHyperlink) createHelper.createHyperlink(Hyperlink.LINK_URL);
             link.setAddress(articleDto.getLink());
             aRow.createCell(2).setHyperlink(link);
             aRow.createCell(2).setCellValue(articleDto.getLink());
 
-            XSSFHyperlink linkImage = (XSSFHyperlink)createHelper.createHyperlink(Hyperlink.LINK_URL);
+            XSSFHyperlink linkImage = (XSSFHyperlink) createHelper.createHyperlink(Hyperlink.LINK_URL);
             linkImage.setAddress(articleDto.getImageUrl());
             aRow.createCell(3).setHyperlink(linkImage);
             aRow.createCell(3).setCellValue(articleDto.getImageUrl());

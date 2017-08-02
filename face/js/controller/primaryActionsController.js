@@ -69,7 +69,14 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
         service.deleteSite(deleteSiteUrl + siteId, function (data) {
             console.log('delete site id - ' + siteId);
             $scope.websiteList.splice(index, 1);
-            if (siteId === $scope.blockFeed.id) {
+            if (data.data) {
+                ngNotify.set('Site was deleted', {
+                    type: "success",
+                    position: 'top',
+                    duration: 1500
+                });
+            }
+            if ($scope.blockFeed.id !== null && siteId === $scope.blockFeed.id) {
                 $scope.resetForm();
             }
         });
