@@ -1,2 +1,2 @@
 'use strict';
-var gogoApp = angular.module('gogoApp', ['ngNotify', 'ngRoute' ]);
+var gogoApp = angular.module('gogoApp', ['ngNotify', 'ngRoute', 'ngProgress']);

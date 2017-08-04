@@ -15,5 +15,7 @@ gogoApp.constant('config', {
     load_config: 'config/',
     delete_site: 'delete/',
     get_fileName: 'file/',
-    download: 'download/'
+    download: 'download/',
+    sendToUrlTry: 'push/url',
+    sendToEmail: 'push/email'
 });

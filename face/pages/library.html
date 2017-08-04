@@ -5,29 +5,44 @@
         <tr>
             <th class="col-md-1">ID</th>
             <th class="col-md-5">Name</th>
-            <th class="col-md-3">Parse</th>
-            <th class="col-md-3">Operation</th>
+            <th class="col-md-2">Parse</th>
+            <th class="col-md-2">Operation</th>
+            <th class="col-md-2">Options</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="current in websiteList">
             <td class="col-md-1">{{current.id}}</td>
             <td class="col-md-5"><span title={{current.site}}>{{current.name}}</span></td>
-            <td class="col-md-3">
+            <td class="col-md-2">
                 <button class="btn btn-sm btn-block btn-outline-warning" ng-click="getListArticleById(current.id)">
+                    <span class="glyphicon glyphicon-list-alt"></span>
                     News
                 </button>
                 <button class="btn btn-sm btn-block btn-outline-success" ng-click="getFile(current.id)">
-                    Download excel file
+                    <span class="glyphicon glyphicon-save"></span>
+                    Excel file
                 </button>
             </td>
-            <td class="col-md-3">
+            <td class="col-md-2">
                 <button class="btn btn-sm btn-block btn-outline-primary" ng-click="loadConfig(current.id)">
+                    <span class="	glyphicon glyphicon-refresh"></span>
                     Update
                 </button>
                 <button class="btn btn-sm btn-block btn-outline-danger"
                         ng-click="deleteSite($index, current.id)">
+                    <span class="glyphicon glyphicon-trash"></span>
                     Delete
+                </button>
+            </td>
+            <td class="col-md-2">
+                <button class="btn btn-sm btn-block btn-outline-primary" ng-click="sendPushToUrl(current.id)">
+                    <span class="glyphicon glyphicon-send"></span>
+                    To url
+                </button>
+                <button type="button" class="btn btn-sm btn-block btn-outline-success" ng-click="sendPushToEmail(current.id)">
+                    <span class="glyphicon glyphicon-envelope"></span>
+                    To email
                 </button>
             </td>
         </tr>
@@ -452,6 +467,133 @@
     </div>
 </div>
 
+<div class="modal fade" id="sendToUrlModal" tabindex="-1" role="dialog" aria-labelledby="sendToUrlModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sendToUrlModalLabel"><span class="glyphicon glyphicon-send"></span> Push parse
+                    news to client API
+                    <span title="[{
+&quot;id&quot; : int,
+&quot;title&quot; : String,
+&quot;link&quot; : String,
+&quot;image&quot; : String,
+&quot;description&quot; : String,
+&quot;date&quot; : String
+}]">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiYLYWSFrAZduovhaMhbr48CyI75ivQFgLG0wkuY0jQdc-RUHi"
+                         width="40" height="40"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="resetFormSendToUrl()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form">
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Url for send:</label>
+                        <input class="col-8 form-control" type="text" ng-model="url" placeholder="url"/>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Schedule:</label>
+                        <select class="col-2" ng-model="time">
+                            <option value="" disabled>Time</option>
+                            <option ng-repeat="day in timeDays" value="{{day.time}}">{{day.time}}</option>
+                        </select>
+                        &nbsp;&nbsp;
+                        <select class="col-2" ng-model="frequency">
+                            <option value="" disabled>Frequency</option>
+                            <option value="once">Once</option>
+                            <option value="everyday">Every day</option>
+                            <option value="everyweek">Every week</option>
+                        </select>
+                        &nbsp;&nbsp;
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Format:</label>
+                        <select class="col-2" ng-model="format">
+                            <option value="" disabled>Type</option>
+                            <option value="json">JSON</option>
+                            <option value="xml">XML</option>
+                        </select>
+                    </div>
+                </form>
+                <br>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <button class="btn btn-info" ng-click="sendToUrlTry(url, time, format, frequency)"
+                                    ng-disabled="url == undefined || time == undefined || format == undefined || frequency == undefined">
+                                Try
+                            </button>
+                            &nbsp;&nbsp;
+                            <div ng-show="sendToUrlTryCheck == true">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2VqU039404PBpBmdyuI5OkXAzklX07upuY-iRZjg0LxOLxTd5"
+                                     width="40" height="40">
+                            </div>
+
+                            <div ng-show="sendToUrlTryCheck == false">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8ueucYM0HJGpsZqQrajq1hZTVV4wRlN-EQNOd2nPZF49IWj08"
+                                     width="40" height="40">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-primary"
+                            ng-disabled="url == undefined || time == undefined || format == undefined || frequency == undefined"
+                            data-dismiss="modal"
+                            ng-click="saveConfigSendToUrl()">
+                        Save config
+                    </button>
+                    <button type="button" class="btn btn-secondary" ng-click="resetFormSendToUrl()" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
+<div class="modal fade" id="sendToEmailModal" tabindex="-1" role="dialog" aria-labelledby="sendToEmailModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sendToEmailModalLabel"><span class="glyphicon glyphicon-envelope"></span>
+                    Send to email
+                    </span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="resetFormSendToEmail()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form">
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Email:</label>
+                        <input class="col-8 form-control" type="text" ng-model="email.dist" placeholder="email"/>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label" >Format:</label>
+                        <select class="col-2" ng-model="email.format">
+                            <option value="" disabled>Type</option>
+                            <option value="json">JSON</option>
+                            <option value="xml">XML</option>
+                        </select>
+                    </div>
+                </form>
+                <br>
+                <div class="modal-footer">
+
+                    <button class="btn btn-outline-primary"
+                            ng-click="sendEmail(email.dist, email.format)"
+                            ng-disabled="email.format == undefined || email.dist == undefined"
+                            data-dismiss="modal">
+                        Send
+                    </button>
+                    <button type="button" class="btn btn-secondary" ng-click="resetFormSendToEmail()" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 

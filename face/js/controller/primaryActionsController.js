@@ -1,6 +1,7 @@
-gogoApp.controller('primaryActionsController', function (config, $scope, $window, service, ngNotify) {
+gogoApp.controller('primaryActionsController', function (config, $scope, $window, service, ngNotify, ngProgressFactory) {
     console.log('core primaryActionsController initialized');
 
+    $scope.progressbar = ngProgressFactory.createInstance();
     var blockFeedUrl = config.url_basic + config.one_block_feed;
     var titleUrl = config.url_basic + config.title;
     var linkUrl = config.url_basic + config.link;
@@ -15,6 +16,8 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
     var deleteSiteUrl = config.url_basic + config.delete_site;
     var fileNameUrl = config.url_basic + config.get_fileName;
     var downloadUrl = config.url_basic + config.download;
+    var pushToUrlTry = config.url_basic + config.sendToUrlTry;
+    var pushToEmail = config.url_basic + config.sendToEmail;
 
     $scope.title = {};
     $scope.title.rule = {};
@@ -62,6 +65,14 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
     $scope.time.rule.key.id = undefined;
 
     $scope.requestData = {};
+    $scope.requestSendToUrl = {};
+    $scope.requestSendToEmail = {};
+
+    service.get(loadListUrl, function (data) {
+        console.log('get all web sites');
+        $scope.websiteList = data;
+        $scope.initDataValue();
+    });
 
     $scope.deleteSite = function (index, siteId) {
         console.log('delete site id - ' + siteId);
@@ -83,12 +94,14 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
     };
 
     $scope.getFeedBlock = function (blockFeed) {
+        $scope.progressbar.start();
         console.log('get blockFeed');
         service.post(blockFeedUrl, blockFeed, function (data) {
             $scope.oneFeed = '';
             $scope.sizeFeeds = '';
             $scope.oneFeed = data.feed;
             $scope.sizeFeeds = data.size;
+            $scope.progressbar.complete();
         });
     };
 
@@ -137,6 +150,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
     };
 
     $scope.getListArticle = function (blockFeed, title, link, image, desc, time) {
+        $scope.progressbar.start();
         $scope.requestData.block = blockFeed;
         $scope.requestData.title = title;
         $scope.requestData.link = link;
@@ -146,6 +160,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
         console.log('url - ' + listUrl);
         service.post(listUrl, $scope.requestData, function (data) {
             $scope.resultArticleList = data;
+            $scope.progressbar.complete();
         });
     };
 
@@ -209,10 +224,7 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
         });
     };
 
-    service.get(loadListUrl, function (data) {
-        console.log('get all web sites');
-        $scope.websiteList = data;
-    });
+
 
 
     $scope.loadConfig = function (siteId) {
@@ -341,9 +353,11 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
     };
 
     $scope.getListArticleById = function (id) {
+        $scope.progressbar.start();
         console.log('url - ' + listUrl + "/" + id);
         service.get(listUrl + "/" + id, function (data) {
             $scope.resultArticleList = data;
+            $scope.progressbar.complete();
         });
     };
 
@@ -356,6 +370,70 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
             console.log('Download URL - ' + url);
             $window.location.href = url;
         });
+    };
+
+    $scope.sendPushToUrl = function (current) {
+        $scope.requestSendToUrl.siteId = angular.copy(current);
+        angular.element(document.querySelector('#sendToUrlModal')).modal('show');
+    };
+
+    $scope.sendPushToEmail = function (current) {
+        $scope.requestSendToEmail.siteId = angular.copy(current);
+        angular.element(document.querySelector('#sendToEmailModal')).modal('show');
+    };
+
+    $scope.sendToUrlTry = function (url, time, format, frequency) {
+        console.log('sendToUrlTry - ' +  $scope.requestSendToUrl.siteId, url, time, format, frequency);
+        $scope.requestSendToUrl.url = url;
+        $scope.requestSendToUrl.time = time;
+        $scope.requestSendToUrl.format = format;
+        $scope.requestSendToUrl.frequency = frequency;
+        service.post(pushToUrlTry, $scope.requestSendToUrl, function (data) {
+            $scope.sendToUrlTryCheck = '';
+            if (data.data == true) {
+                $scope.sendToUrlTryCheck = true;
+            } else {
+                $scope.sendToUrlTryCheck = false;
+            }
+        });
+    };
+
+    $scope.saveConfigSendToUrl = function () {
+        console.log('saveConfigSendToUrl - ' + pushToUrlTry);
+        $scope.resetFormSendToUrl();
+        angular.element(document.querySelector('#sendToUrlModal')).modal('hide');
+    };
+
+    $scope.sendEmail = function (dist, format) {
+        console.log('saveConfigSendToEmail()');
+        $scope.resetFormSendToEmail();
+        var url = pushToEmail + "?id=" + $scope.requestSendToEmail.siteId + "&email=" + dist + "&format=" + format;
+        console.log('saveConfigSendToEmail() url - ' + url);
+        service.get(url, function (data) {
+            if (data.data == true){
+                console.log('Send to email complete.');
+            }
+        });
+        angular.element(document.querySelector('#sendToEmailModal')).modal('hide');
+    };
+
+    $scope.resetFormSendToUrl = function () {
+        $scope.sendToUrlTryCheck = undefined;
+        $scope.url = undefined;
+        $scope.format = undefined;
+        $scope.frequency = undefined;
+        $scope.time = undefined;
+        $scope.requestSendToUrl = {};
+        $scope.requestSendToUrl.url = undefined;
+        $scope.requestSendToUrl.time = undefined;
+        $scope.requestSendToUrl.format = undefined;
+        $scope.requestSendToUrl.frequency = undefined;
+    };
+
+    $scope.resetFormSendToEmail = function () {
+        $scope.email = {};
+        $scope.email.dist = undefined;
+        $scope.email.format = undefined;
     };
 
     $scope.resetForm = function () {
@@ -421,5 +499,39 @@ gogoApp.controller('primaryActionsController', function (config, $scope, $window
         $scope.blockFeed.pattern = undefined;
         $scope.blockFeed.key = undefined;
         $scope.blockFeed.second = undefined;
-    }
-});
+    };
+
+    $scope.initDataValue = function () {
+        $scope.faq = '<code>' +
+            '{ <br> [ <br> "id" : int, <br> "title": String, <br> "description": String, <br> "image": String,<br> "date": String <br> ] <br> } </code>';
+
+        $scope.timeDays = [
+            {time: '00:00'},
+            {time: '01:00 AM'},
+            {time: '02:00 AM'},
+            {time: '03:00 AM'},
+            {time: '04:00 AM'},
+            {time: '05:00 AM'},
+            {time: '06:00 AM'},
+            {time: '07:00 AM'},
+            {time: '08:00 AM'},
+            {time: '09:00 AM'},
+            {time: '10:00 AM'},
+            {time: '11:00 AM'},
+            {time: '12:00 AM'},
+            {time: '01:00 PM'},
+            {time: '02:00 PM'},
+            {time: '03:00 PM'},
+            {time: '04:00 PM'},
+            {time: '05:00 PM'},
+            {time: '06:00 PM'},
+            {time: '07:00 PM'},
+            {time: '08:00 PM'},
+            {time: '09:00 PM'},
+            {time: '10:00 PM'},
+            {time: '11:00 PM'}
+        ]
+    };
+
+})
+;

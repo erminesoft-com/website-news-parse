@@ -3,6 +3,7 @@ package com.erminesoft.controller;
 import com.erminesoft.dto.ArticleDto;
 import com.erminesoft.dto.IncomeListModelParser;
 import com.erminesoft.dto.MainBlock;
+import com.erminesoft.dto.RequestSendToUrlDto;
 import com.erminesoft.service.FileService;
 import com.erminesoft.service.ParserService;
 import org.slf4j.Logger;
@@ -269,5 +270,33 @@ public class ApiController {
     public void getFile(@PathVariable("file_name") String fileName, HttpServletResponse response) {
         logger.info("Enter getFile - {}", fileName);
         fileService.downloadFile(fileName, response);
+    }
+
+
+    /**
+     * Send parse news to URL
+     */
+    @RequestMapping(value = "/push/url", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> sendToUrl(@RequestBody RequestSendToUrlDto requestSendToUrlDto) {
+        logger.info("Enter sendToUrl with requestSendToUrlDto = {}", requestSendToUrlDto);
+        Map<String, Object> map = new HashMap<>();
+        map.put("data", true);
+        logger.info("Leaving sendToUrl with result = {} ", true);
+        return map;
+    }
+
+    /**
+     * Send parse news to Email
+     */
+    @RequestMapping(value = "/push/email", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> sendToEmail(@RequestParam ("id") Long id,
+                                           @RequestParam("email") String email,
+                                           @RequestParam("format") String foramt
+                                           ) {
+        logger.info("Enter sendToUrl with sendToEmail, id = {}, email = {}, format = {}", id, email, foramt);
+        Map<String, Object> map = new HashMap<>();
+        map.put("data", true);
+        logger.info("Leaving sendToEmail with result = {} ", true);
+        return map;
     }
 }
