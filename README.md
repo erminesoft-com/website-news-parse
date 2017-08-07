@@ -1,4 +1,4 @@
-<h2>Web parser to get news from most sites</h2>
+<h2>Web parser to get news from most sites <a href="http://news-feed.erminesoft.co">Working Example</a></h2>
 
 <p>
 List of libraries:
@@ -27,4 +27,4 @@ run jar file (java -jar ./build/libs/site-parser-1.0.jar)
 3. Obtain list correct articles.<br>
 4. Save configuration.<br>
 
-<a href="http://http://news-feed.erminesoft.co">Working Example</a>
+<a href="http://news-feed.erminesoft.co">Working Example</a>
